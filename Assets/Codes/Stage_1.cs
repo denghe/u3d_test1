@@ -60,7 +60,7 @@ public class Stage_1 : IStage {
 
         // 每一种创建 ?? 只
         foreach (var ss in spritess) {
-            for (int i = 0; i < 500; i++) {
+            for (int i = 0; i < 5000; i++) {
                 var x = Scene.gridCenterX + UnityEngine.Random.Range(-Scene.designWidth_2, Scene.designWidth_2);
                 var y = Scene.gridCenterY + UnityEngine.Random.Range(-Scene.designHeight_2, Scene.designHeight_2);
                 monsters.Add(new Monster(this, ss, x, y));
@@ -84,6 +84,8 @@ public class Stage_1 : IStage {
     public void Draw() {
         // 同步 camera 的位置
         camTrans.position = new Vector3(player.x * Scene.designWidthToCameraRatio, -player.y * Scene.designWidthToCameraRatio, camTrans.position.z);
+
+        // todo:
 
         foreach (var monster in monsters) {
             monster.Draw();

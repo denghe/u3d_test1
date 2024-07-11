@@ -7,12 +7,14 @@ public class Player {
 
     public GO go;                                       // 保存底层 u3d 资源
 
-    public const float frameAnimIncrease = 1f / 5;      // 帧动画前进速度
+    public const float defaultMoveSpeed = 20;           // 原始移动速度
+    public const float _1_defaultMoveSpeed = 1f / defaultMoveSpeed;
+    public const float frameAnimIncrease = 1f / 5;      // 帧动画前进速度( 针对 defaultMoveSpeed )
     public float frameIndex = 0;                        // 当前动画帧下标
     public bool flipX;                                  // 根据移动方向判断要不要反转 x 显示
     public float lastMoveValueX;                        // 备份，用来判断移动方向，要不要反转 x 显示
 
-    public float moveSpeed = 20;                        // 每帧移动距离
+    public float moveSpeed = 20;                        // 当前每帧移动距离
     public float x, y;
 
     public Player(IStage stage_, Sprite[] sprites_, float x_, float y_) {
@@ -32,24 +34,25 @@ public class Player {
 
     public virtual bool Update() {
 
-        // 步进动画帧下表
-        frameIndex += frameAnimIncrease;
-        var len = sprites.Length;
-        if (frameIndex >= len) {
-            frameIndex -= len;
-        }
-
         // 玩家控制移动
         if (scene.playerMoving) {
             var mv = scene.playerMoveValue;
             x += mv.x * moveSpeed;
             y += mv.y * moveSpeed;
+
+            // 判断动画绘制方向
             if (lastMoveValueX != mv.x) {
                 flipX = mv.x < 0;
                 lastMoveValueX = mv.x;
             }
-        }
 
+            // 根据移动速度步进动画帧下表
+            frameIndex += frameAnimIncrease * moveSpeed * _1_defaultMoveSpeed;
+            var len = sprites.Length;
+            if (frameIndex >= len) {
+                frameIndex -= len;
+            }
+        }
 
         // todo: 防范挪动到超出 grid地图 范围
 
