@@ -21,9 +21,11 @@ public class SpaceContainer {
 
 
     public SpaceContainer(int numRows_, int numCols_, float cellSize_) {
+#if UNITY_EDITOR
         Debug.Assert(numRows_ > 0);
         Debug.Assert(numCols_ > 0);
         Debug.Assert(cellSize_ > 0);
+#endif
         numRows = numRows_;
         numCols = numCols_;
         cellSize = cellSize_;
@@ -42,6 +44,7 @@ public class SpaceContainer {
 
 
     public void Add(ISpaceItem c) {
+#if UNITY_EDITOR
         Debug.Assert(c != null);
         Debug.Assert(c.spaceContainer == this);
         Debug.Assert(c.spaceIndex == -1);
@@ -49,10 +52,13 @@ public class SpaceContainer {
         Debug.Assert(c.spaceNext == null);
         Debug.Assert(c.spaceX >= 0 && c.spaceX < maxX);
         Debug.Assert(c.spaceY >= 0 && c.spaceY < maxY);
+#endif
 
         // calc rIdx & cIdx
         var idx = PosToIndex(c.spaceX, c.spaceY);
+#if UNITY_EDITOR
         Debug.Assert(cells[idx] == null || cells[idx].spacePrev == null);
+#endif
 
         // link
         if (cells[idx] != null) {
@@ -61,9 +67,11 @@ public class SpaceContainer {
         c.spaceNext = cells[idx];
         c.spaceIndex = idx;
         cells[idx] = c;
+#if UNITY_EDITOR
         Debug.Assert(cells[idx].spacePrev == null);
         Debug.Assert(c.spaceNext != c);
         Debug.Assert(c.spacePrev != c);
+#endif
 
         // stat
         ++numItems;
@@ -71,15 +79,19 @@ public class SpaceContainer {
 
 
     public void Remove(ISpaceItem c) {
+#if UNITY_EDITOR
         Debug.Assert(c != null);
         Debug.Assert(c.spaceContainer == this);
         Debug.Assert(c.spacePrev == null && cells[c.spaceIndex] == c || c.spacePrev.spaceNext == c && cells[c.spaceIndex] != c);
         Debug.Assert(c.spaceNext == null || c.spaceNext.spacePrev == c);
         //Debug.Assert(cells[c.spaceIndex] include c);
+#endif
 
         // unlink
         if (c.spacePrev != null) {  // isn't header
+#if UNITY_EDITOR
             Debug.Assert(cells[c.spaceIndex] != c);
+#endif
             c.spacePrev.spaceNext = c.spaceNext;
             if (c.spaceNext != null) {
                 c.spaceNext.spacePrev = c.spacePrev;
@@ -87,14 +99,18 @@ public class SpaceContainer {
             }
             c.spacePrev = null;
         } else {
+#if UNITY_EDITOR
             Debug.Assert(cells[c.spaceIndex] == c);
+#endif
             cells[c.spaceIndex] = c.spaceNext;
             if (c.spaceNext != null) {
                 c.spaceNext.spacePrev = null;
                 c.spaceNext = null;
             }
         }
+#if UNITY_EDITOR
         Debug.Assert(cells[c.spaceIndex] != c);
+#endif
         c.spaceIndex = -1;
         c.spaceContainer = null;
 
@@ -104,29 +120,35 @@ public class SpaceContainer {
 
 
     public void Update(ISpaceItem c) {
+#if UNITY_EDITOR
         Debug.Assert(c != null);
         Debug.Assert(c.spaceContainer == this);
         Debug.Assert(c.spaceIndex > -1);
         Debug.Assert(c.spaceNext != c);
         Debug.Assert(c.spacePrev != c);
         //Debug.Assert(cells[c.spaceIndex] include c);
+#endif
 
         var x = c.spaceX;
         var y = c.spaceY;
+#if UNITY_EDITOR
         Debug.Assert(x >= 0 && x < maxX);
         Debug.Assert(y >= 0 && y < maxY);
+#endif
         int cIdx = (int)(x * _1_cellSize);
         int rIdx = (int)(y * _1_cellSize);
         int idx = rIdx * numCols + cIdx;
+#if UNITY_EDITOR
         Debug.Assert(idx <= cells.Length);
+#endif
 
         if (idx == c.spaceIndex) return;  // no change
-        //Debug.Assert(cells[idx] != null || cells[idx].spacePrev != null);
-        //Debug.Assert(cells[c.spaceIndex] != null || cells[c.spaceIndex].spacePrev != null);
 
         // unlink
         if (c.spacePrev != null) {  // isn't header
+#if UNITY_EDITOR
             Debug.Assert(cells[c.spaceIndex] != c);
+#endif
             c.spacePrev.spaceNext = c.spaceNext;
             if (c.spaceNext != null) {
                 c.spaceNext.spacePrev = c.spacePrev;
@@ -134,7 +156,9 @@ public class SpaceContainer {
             }
             //c.spacePrev = {};
         } else {
+#if UNITY_EDITOR
             Debug.Assert(cells[c.spaceIndex] == c);
+#endif
             cells[c.spaceIndex] = c.spaceNext;
             if (c.spaceNext != null) {
                 c.spaceNext.spacePrev = null;
@@ -142,8 +166,10 @@ public class SpaceContainer {
             }
         }
         //c.spaceIndex = -1;
+#if UNITY_EDITOR
         Debug.Assert(cells[c.spaceIndex] != c);
         Debug.Assert(idx != c.spaceIndex);
+#endif
 
         // link
         if (cells[idx] != null) {
@@ -153,9 +179,11 @@ public class SpaceContainer {
         c.spaceNext = cells[idx];
         cells[idx] = c;
         c.spaceIndex = idx;
+#if UNITY_EDITOR
         Debug.Assert(cells[idx].spacePrev == null);
         Debug.Assert(c.spaceNext != c);
         Debug.Assert(c.spacePrev != c);
+#endif
     }
 
 
@@ -163,12 +191,16 @@ public class SpaceContainer {
 
     public void Foreach(int idx, ref int limit, ISpaceItem except, Action<ISpaceItem> handler) {
         if (limit <= 0) return;
+#if UNITY_EDITOR
         Debug.Assert(idx >= 0 && idx < cells.Length);
+#endif
         var c = cells[idx];
         while (c != null) {
+#if UNITY_EDITOR
             Debug.Assert(cells[c.spaceIndex].spacePrev == null);
             Debug.Assert(c.spaceNext != c);
             Debug.Assert(c.spacePrev != c);
+#endif
             var next = c.spaceNext;
             if (c != except) {
                 handler(c);
@@ -203,7 +235,9 @@ public class SpaceContainer {
     }
 
     public void Foreach9NeighborCells(ISpaceItem c, ref int limit, Action<ISpaceItem> handler) {
+#if UNITY_EDITOR
         Debug.Assert(c != null);
+#endif
         Foreach(c.spaceIndex, ref limit, c, handler);
         if (limit <= 0) return;
         var rIdx = c.spaceIndex / numCols;
@@ -219,19 +253,25 @@ public class SpaceContainer {
 
     // return cells index
     public int PosToIndex(float x, float y) {
+#if UNITY_EDITOR
         Debug.Assert(x >= 0 && x < maxX);
         Debug.Assert(y >= 0 && y < maxY);
+#endif
         int cIdx = (int)(x * _1_cellSize);
         int rIdx = (int)(y * _1_cellSize);
         int idx = rIdx * numCols + cIdx;
+#if UNITY_EDITOR
         Debug.Assert(idx <= cells.Length);
+#endif
         return idx;
     }
 
     // return x: col index   y: row index
     public SpaceXYi PosToCrIdx(float x, float y) {
+#if UNITY_EDITOR
         Debug.Assert(x >= 0 && x < maxX);
         Debug.Assert(y >= 0 && y < maxY);
+#endif
         return new SpaceXYi { x = (int)(x * _1_cellSize), y = (int)(y * _1_cellSize) };
     }
 
@@ -253,9 +293,11 @@ public class SpaceContainer {
                 var cidx = rIdx * numCols + cIdx;
                 var c = cells[cidx];
                 while (c != null) {
+#if UNITY_EDITOR
                     Debug.Assert(cells[c.spaceIndex].spacePrev == null);
                     Debug.Assert(c.spaceNext != c);
                     Debug.Assert(c.spacePrev != c);
+#endif
                     var vx = c.spaceX - x;
                     var vy = c.spaceY - y;
                     if (vx * vx + vy * vy < rr) {

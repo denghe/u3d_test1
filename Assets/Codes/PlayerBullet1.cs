@@ -53,7 +53,7 @@ public class PlayerBullet1 {
             var dy = y - m.spaceY;
             var dd = dx * dx + dy * dy;
             var r = radius + m.radius;
-            Debug.Log($"b xy = {x} {y}  m xy = {m.spaceX} {m.spaceY}");
+            //Debug.Log($"b xy = {x} {y}  m xy = {m.spaceX} {m.spaceY}");
             if (dd < r * r) {
                 m.Destroy();
                 limit = -1;

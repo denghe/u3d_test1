@@ -47,7 +47,7 @@ public class Monster : ISpaceItem {
         spaceX = x;
         spaceY = y;
         spaceContainer.Add(this);
-        Debug.Log($"spaceIndex = {spaceIndex}");
+        //Debug.Log($"spaceIndex = {spaceIndex}");
     }
 
     public virtual bool Update() {

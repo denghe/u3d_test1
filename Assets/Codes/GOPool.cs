@@ -15,7 +15,9 @@ public struct GO {
 
     // 从对象池拿 GO 并返回. 没有就新建
     public static void Pop(ref GO o, Sprite s = null) {
+#if UNITY_EDITOR
         Debug.Assert(o.g == null);
+#endif
         if (pool.TryPop(out o)) {
             o.g.SetActive(true);
             o.r.sprite = s;
@@ -26,7 +28,9 @@ public struct GO {
 
     // 将 GO 退回对象池
     public static void Push(ref GO o) {
+#if UNITY_EDITOR
         Debug.Assert(o.g != null);
+#endif
         o.g.SetActive(false);
         pool.Push(o);
         o.g = null;
@@ -47,7 +51,9 @@ public struct GO {
 
     // 初始化统一材质, 预填充
     public static void Init(Material material, int count) {
+#if UNITY_EDITOR
         Debug.Assert(GO.material == null);
+#endif
         GO.material = material;
         GO.pool = new Stack<GO>(count);
         for (int i = 0; i < count; i++) {
