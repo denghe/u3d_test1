@@ -49,7 +49,7 @@ public partial class Scene : MonoBehaviour {
     internal const float designWidth_2 = designWidth / 2, designHeight_2 = designHeight / 2;
 
     // 设计分辨率到 摄像头坐标 的转换系数 
-    internal const float designWidthToCameraRatio = 9 / designWidth;    // todo: 需要进一步找准这个数据
+    internal const float designWidthToCameraRatio = 19 / designWidth;    // todo: 需要进一步找准这个数据
 
     // 大地图格子数量
     internal const int numRows = 512, numCols = 512;

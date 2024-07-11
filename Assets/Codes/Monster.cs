@@ -61,12 +61,21 @@ public class Monster : ISpaceItem {
         return false;
     }
 
-    public virtual void Draw() {
-        // 同步帧下标
-        go.r.sprite = sprites[(int)frameIndex];
+    public virtual void Draw(float cx, float cy) {
+        if (spaceX < cx - Scene.designWidth_2
+            || spaceX > cx + Scene.designWidth_2
+            || spaceY < cy - Scene.designHeight_2
+            || spaceY > cy + Scene.designHeight_2) {
+            go.g.SetActive(false);
+        } else {
+            go.g.SetActive(true);
 
-        // 同步 & 坐标系转换( y 坐标需要反转 )
-        go.t.position = new Vector3(spaceX * Scene.designWidthToCameraRatio, -spaceY * Scene.designWidthToCameraRatio, 0);
+            // 同步帧下标
+            go.r.sprite = sprites[(int)frameIndex];
+
+            // 同步 & 坐标系转换( y 坐标需要反转 )
+            go.t.position = new Vector3(spaceX * Scene.designWidthToCameraRatio, -spaceY * Scene.designWidthToCameraRatio, 0);
+        }
     }
 
     public virtual void Destroy() {

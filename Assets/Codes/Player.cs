@@ -56,6 +56,8 @@ public class Player {
 
         // todo: 防范挪动到超出 grid地图 范围
 
+        // todo: 写几句吃怪逻辑，测试 space 查询功能
+
         return false;
     }
 

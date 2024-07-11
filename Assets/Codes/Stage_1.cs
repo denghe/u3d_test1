@@ -85,12 +85,14 @@ public class Stage_1 : IStage {
         // 同步 camera 的位置
         camTrans.position = new Vector3(player.x * Scene.designWidthToCameraRatio, -player.y * Scene.designWidthToCameraRatio, camTrans.position.z);
 
-        // todo:
-
+        var cx = player.x;
+        var cy = player.y;
         foreach (var monster in monsters) {
-            monster.Draw();
+            monster.Draw(cx, cy);
         }
         player.Draw();
+
+        // todo: 用 Gizmos 画一些线框 来核查碰撞范围，半径啥的
     }
 
     public void Destroy() {
