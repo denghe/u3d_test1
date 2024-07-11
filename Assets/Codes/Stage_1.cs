@@ -60,7 +60,7 @@ public class Stage_1 : IStage {
 
         // 每一种创建 ?? 只
         foreach (var ss in spritess) {
-            for (int i = 0; i < 5000; i++) {
+            for (int i = 0; i < 500; i++) {
                 var x = Scene.gridCenterX + UnityEngine.Random.Range(-Scene.designWidth_2, Scene.designWidth_2);
                 var y = Scene.gridCenterY + UnityEngine.Random.Range(-Scene.designHeight_2, Scene.designHeight_2);
                 monsters.Add(new Monster(this, ss, x, y));
@@ -93,6 +93,13 @@ public class Stage_1 : IStage {
         player.Draw();
 
         // todo: 用 Gizmos 画一些线框 来核查碰撞范围，半径啥的
+    }
+
+    public void DrawGizmos() {
+        foreach (var monster in monsters) {
+            monster.DrawGizmos();
+        }
+        player.DrawGizmos();
     }
 
     public void Destroy() {

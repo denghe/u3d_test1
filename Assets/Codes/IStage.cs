@@ -25,4 +25,6 @@ switch (state) {
     public void Destroy();
 
     public void Draw();
+
+    public void DrawGizmos();
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /*
@@ -91,6 +92,7 @@ public partial class Scene : MonoBehaviour {
         // 初始化 HDR 显示模式
         try {
             HDROutputSettings.main.RequestHDRModeChange(true);
+            // todo: 把 light 改亮点 
         } catch (Exception e) {
             Debug.Log(e);
         }
@@ -118,6 +120,11 @@ public partial class Scene : MonoBehaviour {
 
         // 同步显示
         stage.Draw();
+    }
+
+    void OnDrawGizmos() {
+        if (stage == null) return;
+        stage.DrawGizmos();
     }
 
     void OnDestroy() {

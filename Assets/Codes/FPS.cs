@@ -1,5 +1,5 @@
-using UnityEngine;
-public class FPSDisplay : MonoBehaviour
+﻿using UnityEngine;
+public class FPS : MonoBehaviour
 {
     private float deltaTime = 0.0f;
 

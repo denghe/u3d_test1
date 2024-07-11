@@ -10,12 +10,16 @@ public class Player {
     public const float defaultMoveSpeed = 20;           // 原始移动速度
     public const float _1_defaultMoveSpeed = 1f / defaultMoveSpeed;
     public const float frameAnimIncrease = 1f / 5;      // 帧动画前进速度( 针对 defaultMoveSpeed )
+    public const float displayScale = 2f;               // 显示放大修正
+    public const float defaultRadius = 13f;             // 原始半径
+
     public float frameIndex = 0;                        // 当前动画帧下标
     public bool flipX;                                  // 根据移动方向判断要不要反转 x 显示
     public float lastMoveValueX;                        // 备份，用来判断移动方向，要不要反转 x 显示
 
     public float moveSpeed = 20;                        // 当前每帧移动距离
-    public float x, y;
+    public float radius = defaultRadius;                // 半径
+    public float x, y;                                  // grid中的坐标
 
     public Player(IStage stage_, Sprite[] sprites_, float x_, float y_) {
         // 各种基础初始化
@@ -70,6 +74,11 @@ public class Player {
 
         // 同步 & 坐标系转换( y 坐标需要反转 )
         go.t.position = new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0);
+        go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
+    }
+
+    public virtual void DrawGizmos() {
+        Gizmos.DrawWireSphere(new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0), radius * Scene.designWidthToCameraRatio);
     }
 
     public virtual void Destroy() {

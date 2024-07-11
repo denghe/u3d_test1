@@ -292,9 +292,9 @@ MonoBehaviour:
   m_ComponentVersion: 1
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.5
+  m_FalloffIntensity: 0.1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 25
+  m_Intensity: 5
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
   m_ApplyToSortingLayers: 000000005d70da7c
@@ -401,43 +401,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f124ce364ed76e2479b86e110068cce5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 76823b7aa71fdfb45a86a13d327c6537, type: 2}
+  material: {fileID: 2100000, guid: 4add73b73584b93479af06b9b5a56147, type: 2}
   sprites_player:
-  - {fileID: 2069868224, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -1911000688, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -1894569746, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -1791019538, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -791635073, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -1816998361, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -647554783, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 1340987059, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -1425200128, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 2119135369, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
+  - {fileID: -1697832164, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: 986531061, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -60701304, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: 601896693, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1537034488, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: 998427602, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1068413153, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -662102533, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -457562870, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -725307939, guid: 87195734d2b541646b909876ad83d322, type: 3}
   sprites_monster01:
-  - {fileID: 2135394551, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 1256784095, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -1361596579, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 458612844, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
+  - {fileID: -1866987901, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -372313849, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1677267343, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -20310203, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -91153021, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1594957128, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: 571543489, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1821435158, guid: 87195734d2b541646b909876ad83d322, type: 3}
   sprites_monster02:
-  - {fileID: -6066537, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 405906644, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 940918036, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -763991749, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  sprites_monster03:
-  - {fileID: -1264891558, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 348871036, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -551772654, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 1396643090, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  sprites_monster04:
-  - {fileID: 1873583566, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -2032067875, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 2027110283, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: 209887404, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  sprites_monster05:
-  - {fileID: -1852997579, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -14576904, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -1891572229, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
-  - {fileID: -1535373220, guid: 11863e7fc33ede3448180c22304abfd9, type: 3}
+  - {fileID: 1716804584, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1686401289, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1670900998, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1086605233, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: 1478488970, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: 1322067730, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: 1444098531, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1963224479, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  sprites_monster03: []
+  sprites_monster04: []
+  sprites_monster05: []
   sprites_monster06: []
   sprites_monster07: []
   sprites_monster08: []

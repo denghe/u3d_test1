@@ -7,19 +7,27 @@ public class Monster : ISpaceItem {
 
     public GO go;                                       // 保存底层 u3d 资源
 
-    public const float frameAnimIncrease = 1f / 5;      // 帧动画前进速度
+    public const float defaultMoveSpeed = 20;           // 原始移动速度
+    public const float _1_defaultMoveSpeed = 1f / defaultMoveSpeed;
+    public const float frameAnimIncrease = 1f / 5;      // 帧动画前进速度( 针对 defaultMoveSpeed )
+    public const float displayScale = 1f;               // 显示放大修正
+    public const float defaultRadius = 10f;             // 原始半径
+
     public float frameIndex = 0;                        // 当前动画帧下标
+    public bool flipX;                                  // 根据移动方向判断要不要反转 x 显示
+    public float lastMoveValueX;                        // 备份，用来判断移动方向，要不要反转 x 显示
 
-    public float moveSpeed = 20;                        // 每帧移动距离
+    public float moveSpeed = 10;                        // 当前每帧移动距离
+    public float radius = defaultRadius;                // 半径
 
-
-    // 下面是空间索引要用到的接口变量
+    #region space_x_y
     public SpaceContainer spaceContainer { get; set; }
     public ISpaceItem spacePrev { get; set; }
     public ISpaceItem spaceNext { get; set; }
     public int spaceIndex { get; set; } = -1;
     public float spaceX { get; set; }
     public float spaceY { get; set; }
+    #endregion
 
 
     public Monster(IStage stage_, Sprite[] sprites_, float x, float y) {
@@ -75,7 +83,12 @@ public class Monster : ISpaceItem {
 
             // 同步 & 坐标系转换( y 坐标需要反转 )
             go.t.position = new Vector3(spaceX * Scene.designWidthToCameraRatio, -spaceY * Scene.designWidthToCameraRatio, 0);
+            go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
         }
+    }
+
+    public virtual void DrawGizmos() {
+        Gizmos.DrawWireSphere(new Vector3(spaceX * Scene.designWidthToCameraRatio, -spaceY * Scene.designWidthToCameraRatio, 0), radius * Scene.designWidthToCameraRatio);
     }
 
     public virtual void Destroy() {

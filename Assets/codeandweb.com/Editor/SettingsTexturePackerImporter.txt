@@ -1,8 +1,8 @@
 version: 2
 tpsheetFileNames:
-- Assets/Res/d20.tpsheet
+- Assets/Res/res.tpsheet
 textureFileNames:
-- Assets/Res/d20.png
+- Assets/Res/res.png
 normalmapFileNames:
-- Assets/Res/d20_n.png
+- Assets/Res/res_n.png
 enableDebugOutput: 0
