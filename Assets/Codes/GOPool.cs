@@ -27,6 +27,7 @@ public struct GO {
     // 将 GO 退回对象池
     public static void Push(ref GO o) {
         Debug.Assert(o.g != null);
+        o.g.SetActive(false);
         pool.Push(o);
         o.g = null;
         o.r = null;

@@ -2,9 +2,10 @@
 
 public class Monster : ISpaceItem {
     public Scene scene;                                 // 指向场景
-    public IStage stage;                                // 指向关卡
-    public Sprite[] sprites;                            // 指向动画帧集合
+    public Stage stage;                                 // 指向关卡
+    public int indexOfContainer;                        // 自己位于的 stage.monsters 数组的下标
 
+    public Sprite[] sprites;                            // 指向动画帧集合
     public GO go;                                       // 保存底层 u3d 资源
 
     public const float defaultMoveSpeed = 20;           // 原始移动速度
@@ -30,10 +31,12 @@ public class Monster : ISpaceItem {
     #endregion
 
 
-    public Monster(IStage stage_, Sprite[] sprites_, float x, float y) {
+    public Monster(Stage stage_, Sprite[] sprites_, float x, float y) {
         // 各种基础初始化
         stage = stage_;
         scene = stage_.scene;
+        indexOfContainer = stage.monsters.Count;
+        stage.monsters.Add(this);
         sprites = sprites_;
 
         // 从对象池分配 u3d 底层对象
@@ -44,6 +47,7 @@ public class Monster : ISpaceItem {
         spaceX = x;
         spaceY = y;
         spaceContainer.Add(this);
+        Debug.Log($"spaceIndex = {spaceIndex}");
     }
 
     public virtual bool Update() {
@@ -91,7 +95,7 @@ public class Monster : ISpaceItem {
         Gizmos.DrawWireSphere(new Vector3(spaceX * Scene.designWidthToCameraRatio, -spaceY * Scene.designWidthToCameraRatio, 0), radius * Scene.designWidthToCameraRatio);
     }
 
-    public virtual void Destroy() {
+    public virtual void Destroy(bool needRemoveFromContainer = true) {
 #if UNITY_EDITOR
         if (go.g != null)           // unity 点击停止按钮后，这些变量似乎有可能提前变成 null
 #endif
@@ -102,5 +106,15 @@ public class Monster : ISpaceItem {
 
         // 从空间索引容器移除
         spaceContainer.Remove(this);
+
+        // 从 stage 容器交换删除
+        if (needRemoveFromContainer) {
+            var ms = stage.monsters;
+            var lastIndex = ms.Count - 1;
+            var last = ms[lastIndex];
+            last.indexOfContainer = indexOfContainer;
+            ms[indexOfContainer] = last;
+            ms.RemoveAt(lastIndex);
+        }
     }
 }

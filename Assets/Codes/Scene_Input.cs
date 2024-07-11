@@ -150,9 +150,9 @@ partial class Scene {
                 playerMoveValue.y = 0;
                 playerMoving = true;
             }
-            if (playerMoving) {
-                Debug.Log(playerKBMovingUp + " " + playerKBMovingDown + " " + playerKBMovingLeft + " " + playerKBMovingRight + " " + playerMoveValue);
-            }
+            //if (playerMoving) {
+            //    Debug.Log(playerKBMovingUp + " " + playerKBMovingDown + " " + playerKBMovingLeft + " " + playerKBMovingRight + " " + playerMoveValue);
+            //}
         } else {    // 手柄不需要判断
             var v = iapa.GPMove.ReadValue<Vector2>();
             //v.Normalize();

@@ -20,14 +20,14 @@ public class SpaceContainer {
     public ISpaceItem[] cells;                  // grid container( numRows * numCols )
 
 
-    public SpaceContainer(int numRows_, int numCols_, int cellSize_) {
+    public SpaceContainer(int numRows_, int numCols_, float cellSize_) {
         Debug.Assert(numRows_ > 0);
         Debug.Assert(numCols_ > 0);
         Debug.Assert(cellSize_ > 0);
         numRows = numRows_;
         numCols = numCols_;
         cellSize = cellSize_;
-        _1_cellSize = 1 / cellSize_;
+        _1_cellSize = 1f / cellSize_;
         maxY = cellSize * numRows;
         maxX = cellSize * numCols;
         //maxY1 = maxY - float.Epsilon;
@@ -115,14 +115,14 @@ public class SpaceContainer {
         var y = c.spaceY;
         Debug.Assert(x >= 0 && x < maxX);
         Debug.Assert(y >= 0 && y < maxY);
-        int rIdx = (int)(x * _1_cellSize);
-        int cIdx = (int)(y * _1_cellSize);
+        int cIdx = (int)(x * _1_cellSize);
+        int rIdx = (int)(y * _1_cellSize);
         int idx = rIdx * numCols + cIdx;
         Debug.Assert(idx <= cells.Length);
 
         if (idx == c.spaceIndex) return;  // no change
-        Debug.Assert(cells[idx] != null || cells[idx].spacePrev != null);
-        Debug.Assert(cells[c.spaceIndex] != null || cells[c.spaceIndex].spacePrev != null);
+        //Debug.Assert(cells[idx] != null || cells[idx].spacePrev != null);
+        //Debug.Assert(cells[c.spaceIndex] != null || cells[c.spaceIndex].spacePrev != null);
 
         // unlink
         if (c.spacePrev != null) {  // isn't header
@@ -211,16 +211,18 @@ public class SpaceContainer {
         Foreach8NeighborCells(rIdx, cIdx, ref limit, null, handler);
     }
 
-    public void Foreach9NeighborCells(int idx, ref int limit, Action<ISpaceItem> handler) {
-        Foreach9NeighborCells(cells[idx], ref limit, handler);
+    public void Foreach9NeighborCells(SpaceXYi crIdx, ref int limit, Action<ISpaceItem> handler) {
+        Foreach(crIdx.y, crIdx.x, ref limit, null, handler);
+        if (limit <= 0) return;
+        Foreach8NeighborCells(crIdx.y, crIdx.x, ref limit, null, handler);
     }
 
     // return cells index
     public int PosToIndex(float x, float y) {
         Debug.Assert(x >= 0 && x < maxX);
         Debug.Assert(y >= 0 && y < maxY);
-        int rIdx = (int)(x * _1_cellSize);
-        int cIdx = (int)(y * _1_cellSize);
+        int cIdx = (int)(x * _1_cellSize);
+        int rIdx = (int)(y * _1_cellSize);
         int idx = rIdx * numCols + cIdx;
         Debug.Assert(idx <= cells.Length);
         return idx;
@@ -282,7 +284,7 @@ public class SpaceRingDiffuseData {
     public List<SpaceXYi> idxs = new();
 
     public SpaceRingDiffuseData(int crCount, float cellSize) {
-        var _1_cellSize = 1 / cellSize;
+        var _1_cellSize = 1f / cellSize;
         var step = cellSize * 0.5f;
         lens.Add(new SpaceCountRadius { count = 0, radius = 0f });
         var lastIdx = new SpaceXYi();

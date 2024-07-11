@@ -19,6 +19,7 @@ public partial class Scene : MonoBehaviour {
 
     // 编辑器中 分组, 多选 拖拽 精灵图集到此 ( texture packer 插件 生成的那个, 展开再 shift 多选 )
     public Sprite[] sprites_player;
+    public Sprite[] sprites_bullets;
     public Sprite[] sprites_monster01;
     public Sprite[] sprites_monster02;
     public Sprite[] sprites_monster03;
@@ -28,12 +29,6 @@ public partial class Scene : MonoBehaviour {
     public Sprite[] sprites_monster07;
     public Sprite[] sprites_monster08;
     public Sprite[] sprites_monster09;
-    public Sprite[] sprites_monster10;
-    public Sprite[] sprites_monster11;
-    public Sprite[] sprites_monster12;
-    public Sprite[] sprites_monster13;
-    public Sprite[] sprites_monster14;
-    public Sprite[] sprites_monster15;
     // ...
 
 
@@ -53,10 +48,10 @@ public partial class Scene : MonoBehaviour {
     internal const float designWidthToCameraRatio = 19 / designWidth;    // todo: 需要进一步找准这个数据
 
     // 大地图格子数量
-    internal const int numRows = 512, numCols = 512;
+    internal const int numRows = 1024, numCols = 1024;
 
     // 每个格子的直径( 正方形 )
-    internal const float cellSize = 64;
+    internal const float cellSize = 32;
 
     // 大地图总宽度
     internal const float gridWidth = numCols * cellSize;
@@ -79,7 +74,7 @@ public partial class Scene : MonoBehaviour {
     internal float timePool = 0;
 
     // 当前关卡
-    internal IStage stage;
+    internal Stage stage;
 
     // 暂时用于怪物的 空间索引容器
     internal SpaceContainer spaceContainer;
@@ -101,10 +96,10 @@ public partial class Scene : MonoBehaviour {
         GO.Init(material, 20000);
 
         // 初始化空间索引
-        spaceContainer = new(512, 512, 64);
+        spaceContainer = new(numRows, numCols, cellSize);
 
         // 初始化起始关卡
-        stage = new Stage_1(this);
+        stage = new Stage(this);
     }
 
     void Update() {
@@ -115,6 +110,7 @@ public partial class Scene : MonoBehaviour {
         timePool += Time.deltaTime;
         if (timePool > frameDelay) {
             timePool -= frameDelay;
+            ++time;
             stage.Update();
         }
 
@@ -133,7 +129,7 @@ public partial class Scene : MonoBehaviour {
         Debug.Assert(spaceContainer.numItems == 0);
     }
 
-    internal void SetStage(IStage newStage) {
+    internal void SetStage(Stage newStage) {
         stage.Destroy();
         stage = newStage;
     }

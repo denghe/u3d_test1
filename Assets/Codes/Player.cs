@@ -2,7 +2,7 @@
 
 public class Player {
     public Scene scene;                                 // 指向场景
-    public IStage stage;                                // 指向关卡
+    public Stage stage;                                 // 指向关卡
     public Sprite[] sprites;                            // 指向动画帧集合
 
     public GO go;                                       // 保存底层 u3d 资源
@@ -21,7 +21,10 @@ public class Player {
     public float radius = defaultRadius;                // 半径
     public float x, y;                                  // grid中的坐标
 
-    public Player(IStage stage_, Sprite[] sprites_, float x_, float y_) {
+    public int nextShootTime;                           // 下次发射时间点
+    public int shootDelay = 0;                          // 发射cd
+
+    public Player(Stage stage_, Sprite[] sprites_, float x_, float y_) {
         // 各种基础初始化
         stage = stage_;
         scene = stage_.scene;
@@ -60,7 +63,16 @@ public class Player {
 
         // todo: 防范挪动到超出 grid地图 范围
 
-        // todo: 写几句吃怪逻辑，测试 space 查询功能
+        // 子弹发射逻辑
+        if (nextShootTime < scene.time) {
+            nextShootTime = scene.time + shootDelay;
+
+            // todo: 通过找最近 得到发射角度
+            for (int i = 0; i < 10; ++i) {
+                var r = Random.Range(-Mathf.PI, Mathf.PI);
+                new PlayerBullet1(stage, scene.sprites_bullets[1], x, y, r, 60 * 3);
+            }
+        }
 
         return false;
     }

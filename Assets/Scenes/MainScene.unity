@@ -413,6 +413,14 @@ MonoBehaviour:
   - {fileID: -662102533, guid: 87195734d2b541646b909876ad83d322, type: 3}
   - {fileID: -457562870, guid: 87195734d2b541646b909876ad83d322, type: 3}
   - {fileID: -725307939, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  sprites_bullets:
+  - {fileID: -1373118447, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -225636997, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -418687620, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: 1716674999, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -550095649, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: 1238149220, guid: 87195734d2b541646b909876ad83d322, type: 3}
+  - {fileID: -1631613685, guid: 87195734d2b541646b909876ad83d322, type: 3}
   sprites_monster01:
   - {fileID: -1866987901, guid: 87195734d2b541646b909876ad83d322, type: 3}
   - {fileID: -372313849, guid: 87195734d2b541646b909876ad83d322, type: 3}
@@ -438,12 +446,6 @@ MonoBehaviour:
   sprites_monster07: []
   sprites_monster08: []
   sprites_monster09: []
-  sprites_monster10: []
-  sprites_monster11: []
-  sprites_monster12: []
-  sprites_monster13: []
-  sprites_monster14: []
-  sprites_monster15: []
 --- !u!114 &801915741
 MonoBehaviour:
   m_ObjectHideFlags: 0
