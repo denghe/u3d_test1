@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Monster : ISpaceItem {
+public class Monster : SpaceItem {
     public Scene scene;                                 // 指向场景
     public Stage stage;                                 // 指向关卡
     public int indexOfContainer;                        // 自己位于的 stage.monsters 数组的下标
@@ -19,16 +19,6 @@ public class Monster : ISpaceItem {
     public float lastMoveValueX;                        // 备份，用来判断移动方向，要不要反转 x 显示
 
     public float moveSpeed = 10;                        // 当前每帧移动距离
-    public float radius = defaultRadius;                // 半径
-
-    #region space_x_y
-    public SpaceContainer spaceContainer { get; set; }
-    public ISpaceItem spacePrev { get; set; }
-    public ISpaceItem spaceNext { get; set; }
-    public int spaceIndex { get; set; } = -1;
-    public float spaceX { get; set; }
-    public float spaceY { get; set; }
-    #endregion
 
 
     public Monster(Stage stage_, Sprite[] sprites_, float x, float y) {
@@ -46,6 +36,7 @@ public class Monster : ISpaceItem {
         spaceContainer = scene.spaceContainer;
         spaceX = x;
         spaceY = y;
+        spaceRadius = defaultRadius;
         spaceContainer.Add(this);
         //Debug.Log($"spaceIndex = {spaceIndex}");
     }
@@ -92,7 +83,7 @@ public class Monster : ISpaceItem {
     }
 
     public virtual void DrawGizmos() {
-        Gizmos.DrawWireSphere(new Vector3(spaceX * Scene.designWidthToCameraRatio, -spaceY * Scene.designWidthToCameraRatio, 0), radius * Scene.designWidthToCameraRatio);
+        Gizmos.DrawWireSphere(new Vector3(spaceX * Scene.designWidthToCameraRatio, -spaceY * Scene.designWidthToCameraRatio, 0), spaceRadius * Scene.designWidthToCameraRatio);
     }
 
     public virtual void Destroy(bool needRemoveFromContainer = true) {

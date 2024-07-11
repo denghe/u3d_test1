@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ISpaceItem {
-    public SpaceContainer spaceContainer { get; set; }
-    public ISpaceItem spacePrev { get; set; }
-    public ISpaceItem spaceNext { get; set; }
-    public int spaceIndex { get; set; } // == -1
-    public float spaceX { get; set; }
-    public float spaceY { get; set; }
+public class SpaceItem {
+    public SpaceContainer spaceContainer;
+    public SpaceItem spacePrev, spaceNext;
+    public int spaceIndex = -1;
+    public float spaceX, spaceY;
+    public float spaceRadius;       // 用来做碰撞检测. 直接写死, 避免 lambda gc
 }
 
 public class SpaceContainer {
@@ -17,7 +16,7 @@ public class SpaceContainer {
     public float maxY, maxX;                    // edge position
     //public float maxY1, maxX1;                  // maxXY - float.Epsilon
     public int numItems;                        // for state
-    public ISpaceItem[] cells;                  // grid container( numRows * numCols )
+    public SpaceItem[] cells;                  // grid container( numRows * numCols )
 
 
     public SpaceContainer(int numRows_, int numCols_, float cellSize_) {
@@ -35,7 +34,7 @@ public class SpaceContainer {
         //maxY1 = maxY - float.Epsilon;
         //maxX1 = maxX - float.Epsilon;
         if (cells == null) {
-            cells = new ISpaceItem[numRows * numCols];
+            cells = new SpaceItem[numRows * numCols];
         } else {
             Array.Fill(cells, null);
             Array.Resize(ref cells, numRows * numCols);
@@ -43,7 +42,7 @@ public class SpaceContainer {
     }
 
 
-    public void Add(ISpaceItem c) {
+    public void Add(SpaceItem c) {
 #if UNITY_EDITOR
         Debug.Assert(c != null);
         Debug.Assert(c.spaceContainer == this);
@@ -78,7 +77,7 @@ public class SpaceContainer {
     }
 
 
-    public void Remove(ISpaceItem c) {
+    public void Remove(SpaceItem c) {
 #if UNITY_EDITOR
         Debug.Assert(c != null);
         Debug.Assert(c.spaceContainer == this);
@@ -119,7 +118,7 @@ public class SpaceContainer {
     }
 
 
-    public void Update(ISpaceItem c) {
+    public void Update(SpaceItem c) {
 #if UNITY_EDITOR
         Debug.Assert(c != null);
         Debug.Assert(c.spaceContainer == this);
@@ -189,7 +188,7 @@ public class SpaceContainer {
 
 
 
-    public void Foreach(int idx, ref int limit, ISpaceItem except, Action<ISpaceItem> handler) {
+    public void Foreach(int idx, ref int limit, SpaceItem except, Action<SpaceItem> handler) {
         if (limit <= 0) return;
 #if UNITY_EDITOR
         Debug.Assert(idx >= 0 && idx < cells.Length);
@@ -210,13 +209,13 @@ public class SpaceContainer {
         }
     }
 
-    public void Foreach(int rIdx, int cIdx, ref int limit, ISpaceItem except, Action<ISpaceItem> handler) {
+    public void Foreach(int rIdx, int cIdx, ref int limit, SpaceItem except, Action<SpaceItem> handler) {
         if (rIdx < 0 || rIdx >= numRows) return;
         if (cIdx < 0 || cIdx >= numCols) return;
         Foreach(rIdx * numCols + cIdx, ref limit, except, handler);
     }
 
-    public void Foreach8NeighborCells(int rIdx, int cIdx, ref int limit, ISpaceItem except, Action<ISpaceItem> handler) {
+    public void Foreach8NeighborCells(int rIdx, int cIdx, ref int limit, SpaceItem except, Action<SpaceItem> handler) {
         Foreach(rIdx + 1, cIdx, ref limit, except, handler);
         if (limit <= 0) return;
         Foreach(rIdx - 1, cIdx, ref limit, except, handler);
@@ -234,7 +233,7 @@ public class SpaceContainer {
         Foreach(rIdx - 1, cIdx - 1, ref limit, except, handler);
     }
 
-    public void Foreach9NeighborCells(ISpaceItem c, ref int limit, Action<ISpaceItem> handler) {
+    public void Foreach9NeighborCells(SpaceItem c, ref int limit, Action<SpaceItem> handler) {
 #if UNITY_EDITOR
         Debug.Assert(c != null);
 #endif
@@ -245,7 +244,7 @@ public class SpaceContainer {
         Foreach8NeighborCells(rIdx, cIdx, ref limit, null, handler);
     }
 
-    public void Foreach9NeighborCells(SpaceXYi crIdx, ref int limit, Action<ISpaceItem> handler) {
+    public void Foreach9NeighborCells(SpaceXYi crIdx, ref int limit, Action<SpaceItem> handler) {
         Foreach(crIdx.y, crIdx.x, ref limit, null, handler);
         if (limit <= 0) return;
         Foreach8NeighborCells(crIdx.y, crIdx.x, ref limit, null, handler);
@@ -276,7 +275,7 @@ public class SpaceContainer {
     }
 
     // ring diffuse search
-    public void ForeachByRange(SpaceRingDiffuseData d, int x, int y, float maxDistance, Func<ISpaceItem, bool> handler) {
+    public void ForeachByRange(SpaceRingDiffuseData d, int x, int y, float maxDistance, Func<SpaceItem, bool> handler) {
         var crIdxBase = PosToCrIdx(x, y);           // calc grid col row index
         float rr = maxDistance * maxDistance;
         var lens = d.lens;
@@ -310,6 +309,140 @@ public class SpaceContainer {
             if (lens[i].radius > maxDistance) break;            // limit search range
         }
     }
+
+
+
+
+
+
+
+
+
+    // 避免 GC 的特化版
+    public SpaceItem Foreach9FirstHitCheck(float x, float y, float radius) {
+        // 5
+        int cIdx = (int)(x * _1_cellSize);
+        if (cIdx < 0 || cIdx >= numCols) return null;
+        int rIdx = (int)(y * _1_cellSize);
+        if (rIdx < 0 || rIdx >= numRows) return null;
+        int idx = rIdx * numCols + cIdx;
+        var c = cells[idx];
+        while (c != null) {
+            var vx = c.spaceX - x;
+            var vy = c.spaceY - y;
+            var r = c.spaceRadius + radius;
+            if (vx * vx + vy * vy < r * r) {
+                return c;
+            }
+            c = c.spaceNext;
+        }
+        // 6
+        ++cIdx;
+        if (cIdx >= numCols) return null;
+        ++idx;
+        c = cells[idx];
+        while (c != null) {
+            var vx = c.spaceX - x;
+            var vy = c.spaceY - y;
+            var r = c.spaceRadius + radius;
+            if (vx * vx + vy * vy < r * r) {
+                return c;
+            }
+            c = c.spaceNext;
+        }
+        // 3
+        ++rIdx;
+        if (rIdx >= numRows) return null;
+        idx += numCols;
+        c = cells[idx];
+        while (c != null) {
+            var vx = c.spaceX - x;
+            var vy = c.spaceY - y;
+            var r = c.spaceRadius + radius;
+            if (vx * vx + vy * vy < r * r) {
+                return c;
+            }
+            c = c.spaceNext;
+        }
+        // 2
+        --idx;
+        c = cells[idx];
+        while (c != null) {
+            var vx = c.spaceX - x;
+            var vy = c.spaceY - y;
+            var r = c.spaceRadius + radius;
+            if (vx * vx + vy * vy < r * r) {
+                return c;
+            }
+            c = c.spaceNext;
+        }
+        // 1
+        cIdx -= 2;
+        if (cIdx < 0) return null;
+        --idx;
+        c = cells[idx];
+        while (c != null) {
+            var vx = c.spaceX - x;
+            var vy = c.spaceY - y;
+            var r = c.spaceRadius + radius;
+            if (vx * vx + vy * vy < r * r) {
+                return c;
+            }
+            c = c.spaceNext;
+        }
+        // 4
+        idx -= numCols;
+        c = cells[idx];
+        while (c != null) {
+            var vx = c.spaceX - x;
+            var vy = c.spaceY - y;
+            var r = c.spaceRadius + radius;
+            if (vx * vx + vy * vy < r * r) {
+                return c;
+            }
+            c = c.spaceNext;
+        }
+        // 7
+        rIdx -= 2;
+        if (rIdx < 0) return null;
+        idx -= numCols;
+        c = cells[idx];
+        while (c != null) {
+            var vx = c.spaceX - x;
+            var vy = c.spaceY - y;
+            var r = c.spaceRadius + radius;
+            if (vx * vx + vy * vy < r * r) {
+                return c;
+            }
+            c = c.spaceNext;
+        }
+        // 8
+        ++idx;
+        c = cells[idx];
+        while (c != null) {
+            var vx = c.spaceX - x;
+            var vy = c.spaceY - y;
+            var r = c.spaceRadius + radius;
+            if (vx * vx + vy * vy < r * r) {
+                return c;
+            }
+            c = c.spaceNext;
+        }
+        // 9
+        ++idx;
+        c = cells[idx];
+        while (c != null) {
+            var vx = c.spaceX - x;
+            var vy = c.spaceY - y;
+            var r = c.spaceRadius + radius;
+            if (vx * vx + vy * vy < r * r) {
+                return c;
+            }
+            c = c.spaceNext;
+        }
+        return null;
+    }
+
 
 }
 
