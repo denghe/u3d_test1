@@ -414,7 +414,7 @@ public class SpaceContainer {
                                 Quick_Sort(0, os.Count - 1);
                             }
                         } else {
-                            if (os[0].distance > v) {
+                            if (os[0].distance < v) {
                                 os[0] = new DistanceSpaceItem { distance = v, item = c };
                                 Quick_Sort(0, os.Count - 1);
                             }

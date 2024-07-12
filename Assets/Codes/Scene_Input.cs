@@ -3,16 +3,26 @@
 partial class Scene {
 
     // 处理玩家输入
-    internal InputActions.PlayerActions iapa;   // 不能在这直接 new，会为空
-    internal bool playerKBMovingUp;             // 键盘 W/UP
-    internal bool playerKBMovingDown;           // 键盘 S/Down
-    internal bool playerKBMovingLeft;           // 键盘 A/Left
-    internal bool playerKBMovingRight;          // 键盘 D/Right
+    internal InputActions.PlayerActions iapa;           // 不能在这直接 new，会为空
+    internal bool playerKBMovingUp;                     // 键盘 W/UP
+    internal bool playerKBMovingDown;                   // 键盘 S/Down
+    internal bool playerKBMovingLeft;                   // 键盘 A/Left
+    internal bool playerKBMovingRight;                  // 键盘 D/Right
     // 主要用下面这几个
-    internal bool playerUsingKeyboard;          // false: 手柄
-    internal bool playerJumping;                // 键盘 Space 或 手柄按钮 A / X
-    internal bool playerMoving;                 // 是否正在移动( 键盘 ASDW 或 手柄左 joy 均能触发 )
-    internal Vector2 playerMoveValue;           // 归一化之后的移动方向( 读前先判断 playerMoving )
+    internal bool playerUsingKeyboard;                  // false: 手柄
+    internal bool playerJumping;                        // 键盘 Space 或 手柄按钮 A / X
+    internal bool playerMoving;                         // 是否正在移动( 键盘 ASDW 或 手柄左 joy 均能触发 )
+    internal Vector2 playerMoveValue;                   // 归一化之后的移动方向( 读前先判断 playerMoving )
+    internal Vector2 playerLastMoveValue = new(1, 0);   // 上一个非 0 移动值的备份( 当前值如果为 0, 该值可供参考 )
+    internal Vector2 playerDirection {                  // 获取玩家朝向
+        get {
+            if (playerMoving) {
+                return playerMoveValue;
+            } else {
+                return playerLastMoveValue;
+            }
+        }
+    }
 
     internal void InitInputAction() {
         var ia = new InputActions();
@@ -159,6 +169,9 @@ partial class Scene {
             playerMoveValue.x = v.x;
             playerMoveValue.y = -v.y;
             // todo: playerMoving = 距离 > 死区长度 ?
+        }
+        if (playerMoving) {
+            playerLastMoveValue = playerMoveValue;
         }
     }
 }

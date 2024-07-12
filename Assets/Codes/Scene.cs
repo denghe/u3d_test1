@@ -2,17 +2,10 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-/*
-条件:
-    需要安装 TexturePacker Importer
-    需要安装 Input System 并添加 Input Action 生成代码
-    项目设置 Player 里须勾选 HDR 那两个选项
-    Assets\Settings\Render2D 需修改 General \ Transparency Sort Mode 为 Custom Axis, X 0 Y 1 Z 0
-    场景中的 灯光 可以拖拽到 Camera 下面，避免 Camera 移动之后照不到
-*/
-
-// 空场景新建 GameObject 空类挂上去. 拖拽时先点击 锁 图标锁定
+// 显示设置改为 dx12 可在 editor 里观察 hdr 效果
 public partial class Scene : MonoBehaviour {
+
+    // 拖拽时先点击 锁 图标锁定
 
     // 编辑器中拖拽 带法线的材质球到此 ( texture packer 插件 生成的那个, 需要核查法线贴图是否正确 )
     public Material material;
@@ -75,7 +68,6 @@ public partial class Scene : MonoBehaviour {
         // 初始化 HDR 显示模式
         try {
             HDROutputSettings.main.RequestHDRModeChange(true);
-            // todo: 把 light 改亮点 
         } catch (Exception e) {
             Debug.Log(e);
         }

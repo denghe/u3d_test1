@@ -48,10 +48,7 @@ public class Player {
             y += mv.y * moveSpeed;
 
             // 判断动画绘制方向
-            if (lastMoveValueX != mv.x) {
-                flipX = mv.x < 0;
-                lastMoveValueX = mv.x;
-            }
+            flipX = scene.playerDirection.x < 0;
 
             // 根据移动速度步进动画帧下表
             frameIndex += frameAnimIncrease * moveSpeed * _1_defaultMoveSpeed;
@@ -67,16 +64,29 @@ public class Player {
         if (nextShootTime < scene.time) {
             nextShootTime = scene.time + shootDelay;
 
-            // 找射程内 距离最近的 最多 10只 分别朝向其发射子弹
+            // 找射程内 距离最近的 最多 10 只 分别朝向其发射子弹. 如果不足 10 只，轮流扫射，直到用光 10 发。0 只 就面对朝向发射
+            var count = 10;
             var sc = stage.monstersSpaceContainer;
-            var n = sc.FindNearestNByRange(Scene.spaceRDD, x, y, 360, 10);
-            for (int i = 0; i < n; ++i) {
-                var o = sc.result_FindNearestN[i].item;
-                var r = Mathf.Atan2(o.y - y, o.x - x);
-                new PlayerBullet1(stage, scene.sprites_bullets[1], x, y, r, 60 * 3);
+            var n = sc.FindNearestNByRange(Scene.spaceRDD, x, y, 360, count);
+            if (n > 0) {
+                while (count > 0) {
+                    for (int i = 0; i < n; ++i) {
+                        var o = sc.result_FindNearestN[i].item;
+                        var dy = o.y - y;
+                        var dx = o.x - x;
+                        var r = Mathf.Atan2(dy, dx);
+                        new PlayerBullet1(stage, scene.sprites_bullets[1], x, y, r, 60 * 3);
+                        --count;
+                        if (count == 0) break;
+                    }
+                }
+            } else {
+                var d = scene.playerDirection;
+                var r = Mathf.Atan2(d.y, d.x);
+                for (int i = 0; i < count; ++i) {
+                    new PlayerBullet1(stage, scene.sprites_bullets[1], x, y, r, 60 * 3);
+                }
             }
-            //Debug.Log($"n = {n}");
-            //var r = Random.Range(-Mathf.PI, Mathf.PI);
         }
 
         return false;
