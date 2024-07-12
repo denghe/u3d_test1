@@ -21,7 +21,7 @@ public class Monster : SpaceItem {
     public float moveSpeed = 10;                        // 当前每帧移动距离
 
 
-    public Monster(Stage stage_, Sprite[] sprites_, float x, float y) {
+    public Monster(Stage stage_, Sprite[] sprites_, float x_, float y_) {
         // 各种基础初始化
         stage = stage_;
         scene = stage_.scene;
@@ -34,9 +34,9 @@ public class Monster : SpaceItem {
 
         // 放入空间索引容器
         spaceContainer = scene.spaceContainer;
-        spaceX = x;
-        spaceY = y;
-        spaceRadius = defaultRadius;
+        x = x_;
+        y = y_;
+        radius = defaultRadius;
         spaceContainer.Add(this);
         //Debug.Log($"spaceIndex = {spaceIndex}");
     }
@@ -54,8 +54,8 @@ public class Monster : SpaceItem {
         var r = Random.Range(0f, Mathf.PI * 2);
         var sin = Mathf.Sin(r);
         var cos = Mathf.Cos(r);
-        spaceX += cos * moveSpeed;
-        spaceY += sin * moveSpeed;
+        x += cos * moveSpeed;
+        y += sin * moveSpeed;
 
         // todo: 防范怪物随机挪动到超出 grid地图 范围
 
@@ -65,10 +65,10 @@ public class Monster : SpaceItem {
     }
 
     public virtual void Draw(float cx, float cy) {
-        if (spaceX < cx - Scene.designWidth_2
-            || spaceX > cx + Scene.designWidth_2
-            || spaceY < cy - Scene.designHeight_2
-            || spaceY > cy + Scene.designHeight_2) {
+        if (x < cx - Scene.designWidth_2
+            || x > cx + Scene.designWidth_2
+            || y < cy - Scene.designHeight_2
+            || y > cy + Scene.designHeight_2) {
             go.g.SetActive(false);
         } else {
             go.g.SetActive(true);
@@ -77,13 +77,13 @@ public class Monster : SpaceItem {
             go.r.sprite = sprites[(int)frameIndex];
 
             // 同步 & 坐标系转换( y 坐标需要反转 )
-            go.t.position = new Vector3(spaceX * Scene.designWidthToCameraRatio, -spaceY * Scene.designWidthToCameraRatio, 0);
+            go.t.position = new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0);
             go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
         }
     }
 
     public virtual void DrawGizmos() {
-        Gizmos.DrawWireSphere(new Vector3(spaceX * Scene.designWidthToCameraRatio, -spaceY * Scene.designWidthToCameraRatio, 0), spaceRadius * Scene.designWidthToCameraRatio);
+        Gizmos.DrawWireSphere(new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0), radius * Scene.designWidthToCameraRatio);
     }
 
     public virtual void Destroy(bool needRemoveFromContainer = true) {

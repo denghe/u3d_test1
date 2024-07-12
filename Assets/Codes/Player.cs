@@ -68,6 +68,8 @@ public class Player {
             nextShootTime = scene.time + shootDelay;
 
             // todo: 通过找最近 得到发射角度
+
+
             for (int i = 0; i < 10; ++i) {
                 var r = Random.Range(-Mathf.PI, Mathf.PI);
                 new PlayerBullet1(stage, scene.sprites_bullets[1], x, y, r, 60 * 3);
