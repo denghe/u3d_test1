@@ -33,7 +33,7 @@ public class Monster : SpaceItem {
         GO.Pop(ref go);
 
         // 放入空间索引容器
-        spaceContainer = scene.spaceContainer;
+        spaceContainer = stage.monstersSpaceContainer;
         x = x_;
         y = y_;
         radius = defaultRadius;

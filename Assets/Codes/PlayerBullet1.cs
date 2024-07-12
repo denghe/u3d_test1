@@ -44,25 +44,7 @@ public class PlayerBullet1 {
         y += incY;
         // todo: 防范挪动到超出 grid地图 范围
 
-        // 碰撞检测( 有 gc )
-        //var crIdx = scene.spaceContainer.PosToCrIdx(x, y);
-        //int limit = 100;
-        //scene.spaceContainer.Foreach9NeighborCells(crIdx, ref limit, m => {
-        //    var m = o as Monster;
-        //    var dx = x - m.spaceX;
-        //    var dy = y - m.spaceY;
-        //    var dd = dx * dx + dy * dy;
-        //    var r = radius + m.radius;
-        //    //Debug.Log($"b xy = {x} {y}  m xy = {m.spaceX} {m.spaceY}");
-        //    if (dd < r * r) {
-        //        m.Destroy();
-        //        limit = -1;
-        //    }
-        //});
-        //if (limit <= -1) {
-        //    return true;
-        //}
-        var o = scene.spaceContainer.Foreach9FirstHitCheck(x, y, radius);
+        var o = stage.monstersSpaceContainer.Foreach9FirstHitCheck(x, y, radius);
         if (o != null) {
             ((Monster)o).Destroy();
             return true;

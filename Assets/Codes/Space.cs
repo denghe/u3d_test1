@@ -328,7 +328,7 @@ public class SpaceContainer {
 
 
     // 圆形扩散遍历找出 边距最近的 1 个并返回
-    public SpaceItem FindNearestByRange(SpaceRingDiffuseData d, int x, int y, float maxDistance) {
+    public SpaceItem FindNearestByRange(SpaceRingDiffuseData d, float x, float y, float maxDistance) {
         int cIdxBase = (int)(x * _1_cellSize);
         if (cIdxBase < 0 || cIdxBase >= numCols) return null;
         int rIdxBase = (int)(y * _1_cellSize);
@@ -376,7 +376,7 @@ public class SpaceContainer {
     public List<DistanceSpaceItem> result_FindNearestN = new();
 
     // 圆形扩散遍历 找出范围内 边缘最近的 最多 n 个, 返回实际个数。searchRange 决定了要扫多远的格子. maxDistance 限制了结果集最大边距
-    public int FindNearestNByRange(SpaceRingDiffuseData d, int x, int y, float maxDistance, int n) {
+    public int FindNearestNByRange(SpaceRingDiffuseData d, float x, float y, float maxDistance, int n) {
         int cIdxBase = (int)(x * _1_cellSize);
         if (cIdxBase < 0 || cIdxBase >= numCols) return 0;
         int rIdxBase = (int)(y * _1_cellSize);
@@ -411,12 +411,12 @@ public class SpaceContainer {
                         if (os.Count < n) {
                             os.Add(new DistanceSpaceItem { distance = v, item = c });
                             if (os.Count == n) {
-                                os.Sort();
+                                Quick_Sort(0, os.Count - 1);
                             }
                         } else {
                             if (os[0].distance > v) {
                                 os[0] = new DistanceSpaceItem { distance = v, item = c };
-                                os.Sort();
+                                Quick_Sort(0, os.Count - 1);
                             }
                         }
                     }
@@ -427,6 +427,37 @@ public class SpaceContainer {
             if (lens[i].radius > searchRange) break;
         }
         return os.Count;
+    }
+
+    // 排序 result_FindNearestN               .Sort(); 函数会造成 128 byte gc
+    private void Quick_Sort(int left, int right) {
+        if (left < right) {
+            int pivot = Partition(left, right);
+            if (pivot > 1) {
+                Quick_Sort(left, pivot - 1);
+            }
+            if (pivot + 1 < right) {
+                Quick_Sort(pivot + 1, right);
+            }
+        }
+    }
+    private int Partition(int left, int right) {
+        var arr = result_FindNearestN;
+        var pivot = arr[left];
+        while (true) {
+            while (arr[left].distance < pivot.distance) {
+                left++;
+            }
+            while (arr[right].distance > pivot.distance) {
+                right--;
+            }
+            if (left < right) {
+                if (arr[left].distance == arr[right].distance) return right;
+                var temp = arr[left];
+                arr[left] = arr[right];
+                arr[right] = temp;
+            } else return right;
+        }
     }
 
 }

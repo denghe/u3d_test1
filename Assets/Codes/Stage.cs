@@ -1,21 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Unity.Collections;
 using UnityEngine;
 
 public class Stage {
+
+    // 大地图格子数量
+    internal const int numRows = 1024, numCols = 1024;
+
+    // 大地图总宽度
+    internal const float gridWidth = numCols * Scene.cellSize;
+
+    // 大地图总高度
+    internal const float gridHeight = numRows * Scene.cellSize;
+
+    // 大地图中心点坐标
+    internal const float gridWidth_2 = gridWidth / 2, gridHeight_2 = gridHeight / 2;
+    internal const float gridCenterX = gridWidth_2, gridCenterY = gridHeight_2;
+
     public Scene scene { get; }
+    public List<Sprite[]> spritess = new();
     public int state = 0;
 
     public Transform camTrans;  // cache
     public Player player;
     public List<PlayerBullet1> playerBullets = new();
     public List<Monster> monsters = new();
-    public List<Sprite[]> spritess = new();
+    internal SpaceContainer monstersSpaceContainer;
+
 
     public Stage(Scene scene) {
         this.scene = scene;
+        monstersSpaceContainer = new(numRows, numCols, Scene.cellSize);
         camTrans = Camera.main.transform;
     }
 
@@ -73,18 +91,18 @@ public class Stage {
 
         // 每一种创建 ?? 只
         foreach (var ss in spritess) {
-            for (int i = 0; i < 500; i++) {
-                var x = Scene.gridCenterX + UnityEngine.Random.Range(-Scene.designWidth_2, Scene.designWidth_2);
-                var y = Scene.gridCenterY + UnityEngine.Random.Range(-Scene.designHeight_2, Scene.designHeight_2);
+            for (int i = 0; i < 5000; i++) {
+                var x = gridCenterX + UnityEngine.Random.Range(-Scene.designWidth_2, Scene.designWidth_2);
+                var y = gridCenterY + UnityEngine.Random.Range(-Scene.designHeight_2, Scene.designHeight_2);
                 new Monster(this, ss, x, y);
             }
         }
 
         // 创建 Player
-        player = new(this, scene.sprites_player, Scene.gridCenterX, Scene.gridCenterY);
+        player = new(this, scene.sprites_player, gridCenterX, gridCenterY);
 
         // 初始化 camera 位置, 令其指向 大地图 中心点( y 坐标需要反转 )
-        camTrans.position = new Vector3(Scene.gridCenterX * Scene.designWidthToCameraRatio, -Scene.gridCenterY * Scene.designWidthToCameraRatio, camTrans.position.z);
+        camTrans.position = new Vector3(gridCenterX * Scene.designWidthToCameraRatio, -gridCenterY * Scene.designWidthToCameraRatio, camTrans.position.z);
 
         state = 1;
     }
@@ -126,6 +144,7 @@ public class Stage {
             o.Destroy(false);             // 纯 destroy，不从 monsters 移除自己
         }
         monsters.Clear();
+        Debug.Assert(monstersSpaceContainer.numItems == 0);
         foreach (var o in playerBullets) {
             o.Destroy();
         }

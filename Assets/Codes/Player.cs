@@ -67,13 +67,16 @@ public class Player {
         if (nextShootTime < scene.time) {
             nextShootTime = scene.time + shootDelay;
 
-            // todo: 通过找最近 得到发射角度
-
-
-            for (int i = 0; i < 10; ++i) {
-                var r = Random.Range(-Mathf.PI, Mathf.PI);
+            // 找射程内 距离最近的 最多 10只 分别朝向其发射子弹
+            var sc = stage.monstersSpaceContainer;
+            var n = sc.FindNearestNByRange(Scene.spaceRDD, x, y, 360, 10);
+            for (int i = 0; i < n; ++i) {
+                var o = sc.result_FindNearestN[i].item;
+                var r = Mathf.Atan2(o.y - y, o.x - x);
                 new PlayerBullet1(stage, scene.sprites_bullets[1], x, y, r, 60 * 3);
             }
+            //Debug.Log($"n = {n}");
+            //var r = Random.Range(-Mathf.PI, Mathf.PI);
         }
 
         return false;

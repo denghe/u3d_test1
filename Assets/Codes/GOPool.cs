@@ -11,7 +11,6 @@ public struct GO {
     // 测试一下对象池 看看是否省 cpu
     public static Stack<GO> pool;
     public static Material material;
-    public static SpaceRingDiffuseData spaceRDD = new(100, 64);
 
     // 从对象池拿 GO 并返回. 没有就新建
     public static void Pop(ref GO o, Sprite s = null) {

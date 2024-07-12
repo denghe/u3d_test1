@@ -47,21 +47,8 @@ public partial class Scene : MonoBehaviour {
     // 设计分辨率到 摄像头坐标 的转换系数 
     internal const float designWidthToCameraRatio = 19 / designWidth;    // todo: 需要进一步找准这个数据
 
-    // 大地图格子数量
-    internal const int numRows = 1024, numCols = 1024;
-
     // 每个格子的直径( 正方形 )
     internal const float cellSize = 32;
-
-    // 大地图总宽度
-    internal const float gridWidth = numCols * cellSize;
-
-    // 大地图总高度
-    internal const float gridHeight = numRows * cellSize;
-
-    // 大地图中心点坐标
-    internal const float gridWidth_2 = gridWidth / 2, gridHeight_2 = gridHeight / 2;
-    internal const float gridCenterX = gridWidth_2, gridCenterY = gridHeight_2;
 
     // 一些常数
     internal const float sqrt2 = 1.414213562373095f;
@@ -76,8 +63,9 @@ public partial class Scene : MonoBehaviour {
     // 当前关卡
     internal Stage stage;
 
-    // 暂时用于怪物的 空间索引容器
-    internal SpaceContainer spaceContainer;
+    // 空间索引容器 要用到的找最近所需要的格子偏移数组( all stage 公用 )
+    internal static SpaceRingDiffuseData spaceRDD = new(100, cellSize);
+
 
     void Start() {
 
@@ -94,9 +82,6 @@ public partial class Scene : MonoBehaviour {
 
         // 初始化对象池
         GO.Init(material, 20000);
-
-        // 初始化空间索引
-        spaceContainer = new(numRows, numCols, cellSize);
 
         // 初始化起始关卡
         stage = new Stage(this);
@@ -126,7 +111,6 @@ public partial class Scene : MonoBehaviour {
     void OnDestroy() {
         stage.Destroy();
         GO.Destroy();
-        Debug.Assert(spaceContainer.numItems == 0);
     }
 
     internal void SetStage(Stage newStage) {
