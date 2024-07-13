@@ -33,6 +33,10 @@ public class Monster : SpaceItem {
         GO.Pop(ref go);
         go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
 
+        if (Random.Range(0f, 1f) > 0.5f) {
+            go.SetColorWhite();
+        }
+
         // 放入空间索引容器
         spaceContainer = stage.monstersSpaceContainer;
         x = x_;

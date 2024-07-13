@@ -23,6 +23,17 @@ public struct GO {
         }
     }
 
+    public void SetColorNormal() {
+        r.color = new Color(1f, 1f, 1f, 1f);
+    }
+
+    // 复制原始 shader 改了一下顶点 color 的值为 1/color 取倒数，从而可大幅度放大颜色值. 这样可实现全白
+    // 可能是因为精度问题，编辑器中颜色码小于 8 会整个变黑. 故先暂定最小值为 8/255 即 0.0314
+    public void SetColorWhite() {
+        const float minVal = 0.0314f;
+        r.color = new Color(minVal, minVal, minVal, 1f);
+    }
+
     // 测试一下对象池 看看是否省 cpu
     public static Stack<GO> pool;
     public static Material material;
@@ -44,6 +55,7 @@ public struct GO {
         Debug.Assert(o.g != null);
 #endif
         o.Disable();
+        o.SetColorNormal();
         pool.Push(o);
         o.g = null;
         o.r = null;
