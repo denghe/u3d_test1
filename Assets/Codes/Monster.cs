@@ -9,7 +9,7 @@ public class Monster : SpaceItem {
     public GO go;                                       // 保存底层 u3d 资源
 
     public const float defaultMoveSpeed = 20;           // 原始移动速度
-    public const float _1_defaultMoveSpeed = 1f / defaultMoveSpeed;
+    public const float _1_defaultMoveSpeed = 1f / defaultMoveSpeed; // 倒数, 转除法为乘法
     public const float frameAnimIncrease = 1f / 5;      // 帧动画前进速度( 针对 defaultMoveSpeed )
     public const float displayScale = 1f;               // 显示放大修正
     public const float defaultRadius = 10f;             // 原始半径
@@ -31,6 +31,7 @@ public class Monster : SpaceItem {
 
         // 从对象池分配 u3d 底层对象
         GO.Pop(ref go);
+        go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
 
         // 放入空间索引容器
         spaceContainer = stage.monstersSpaceContainer;
@@ -43,13 +44,6 @@ public class Monster : SpaceItem {
 
     public virtual bool Update() {
 
-        // 步进动画帧下表
-        frameIndex += frameAnimIncrease;
-        var len = sprites.Length;
-        if (frameIndex >= len) {
-            frameIndex -= len;
-        }
-
         // 随机角度移动
         var r = Random.Range(0f, Mathf.PI * 2);
         var sin = Mathf.Sin(r);
@@ -57,7 +51,18 @@ public class Monster : SpaceItem {
         x += cos * moveSpeed;
         y += sin * moveSpeed;
 
-        // todo: 防范怪物随机挪动到超出 grid地图 范围
+        // 强行限制移动范围
+        if (x < 0) x = 0;
+        else if (x >= Stage.gridWidth) x = Stage.gridWidth - float.Epsilon;
+        if (y < 0) y = 0;
+        else if (y >= Stage.gridHeight) x = Stage.gridHeight - float.Epsilon;
+
+        // 根据移动速度步进动画帧下表
+        frameIndex += frameAnimIncrease * moveSpeed * _1_defaultMoveSpeed;
+        var len = sprites.Length;
+        if (frameIndex >= len) {
+            frameIndex -= len;
+        }
 
         // 更新在空间索引容器中的位置
         spaceContainer.Update(this);
@@ -69,16 +74,15 @@ public class Monster : SpaceItem {
             || x > cx + Scene.designWidth_2
             || y < cy - Scene.designHeight_2
             || y > cy + Scene.designHeight_2) {
-            go.g.SetActive(false);
+            go.Disable();
         } else {
-            go.g.SetActive(true);
+            go.Enable();
 
             // 同步帧下标
             go.r.sprite = sprites[(int)frameIndex];
 
             // 同步 & 坐标系转换( y 坐标需要反转 )
             go.t.position = new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0);
-            go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
         }
     }
 

@@ -33,6 +33,7 @@ public class Player {
 
         // 从对象池分配 u3d 底层对象
         GO.Pop(ref go);
+        go.Enable();
 
         // 设置坐标
         x = x_;
@@ -58,7 +59,11 @@ public class Player {
             }
         }
 
-        // todo: 防范挪动到超出 grid地图 范围
+        // 强行限制移动范围
+        if (x < 0) x = 0;
+        else if (x >= Stage.gridWidth) x = Stage.gridWidth - float.Epsilon;
+        if (y < 0) y = 0;
+        else if (y >= Stage.gridHeight) x = Stage.gridHeight - float.Epsilon;
 
         // 子弹发射逻辑
         if (nextShootTime < scene.time) {

@@ -29,6 +29,7 @@ public class Stage {
     public List<PlayerBullet1> playerBullets = new();
     public List<Monster> monsters = new();
     internal SpaceContainer monstersSpaceContainer;
+    public List<Effect_Explosion> effectExplosions = new();
 
 
     public Stage(Scene scene) {
@@ -42,7 +43,19 @@ public class Stage {
         for (int i = os.Count - 1; i >= 0; i--) {
             var o = os[i];
             if (o.Update()) {
-                o.Destroy();    // 会从 monsters 自动移除自己
+                o.Destroy();    // 会从 容器 自动移除自己
+            }
+        }
+        return os.Count > 0;
+    }
+
+    public bool ExplosionsUpdate() {
+        var os = effectExplosions;
+        for (int i = os.Count - 1; i >= 0; i--) {
+            var o = os[i];
+            if (o.Update()) {
+                os.RemoveAtSwapBack(i); // 从数组移除
+                o.Destroy();    // 资源回收. 并不会自动从数组移除
             }
         }
         return os.Count > 0;
@@ -54,7 +67,7 @@ public class Stage {
             var o = os[i];
             if (o.Update()) {
                 os.RemoveAtSwapBack(i); // 从数组移除
-                o.Destroy();    // 并不会自动从数组移除
+                o.Destroy();    // 资源回收. 并不会自动从数组移除
             }
         }
         return os.Count > 0;
@@ -110,6 +123,7 @@ public class Stage {
     public void State1() {
         MonstersUpdate();
         PlayerBulletsUpdate();
+        ExplosionsUpdate();
         player.Update();
     }
 
@@ -124,6 +138,9 @@ public class Stage {
             o.Draw(cx, cy);
         }
         foreach (var o in playerBullets) {
+            o.Draw(cx, cy);
+        }
+        foreach (var o in effectExplosions) {
             o.Draw(cx, cy);
         }
         player.Draw();
@@ -143,13 +160,20 @@ public class Stage {
         foreach (var o in monsters) {
             o.Destroy(false);             // 纯 destroy，不从 monsters 移除自己
         }
-        monsters.Clear();
-        Debug.Assert(monstersSpaceContainer.numItems == 0);
         foreach (var o in playerBullets) {
             o.Destroy();
         }
-        monsters.Clear();
+        foreach (var o in effectExplosions) {
+            o.Destroy();
+        }
         player.Destroy();
+        // ...
+
+        Debug.Assert(monstersSpaceContainer.numItems == 0);
+        monsters.Clear();
+        playerBullets.Clear();
+        effectExplosions.Clear();
         player = null;
+        // ...
     }
 }

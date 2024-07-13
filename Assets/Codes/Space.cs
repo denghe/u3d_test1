@@ -519,6 +519,7 @@ public class SpaceRingDiffuseData {
     }
 }
 
+// 部分参考代码
 
 //    // return x: col index   y: row index
 //    public SpaceXYi PosToCrIdx(float x, float y) {

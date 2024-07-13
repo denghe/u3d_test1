@@ -11,6 +11,8 @@ public partial class Scene : MonoBehaviour {
     public Material material;
 
     // 编辑器中 分组, 多选 拖拽 精灵图集到此 ( texture packer 插件 生成的那个, 展开再 shift 多选 )
+    public Sprite[] sprites_numbers;
+    public Sprite[] sprites_explosions;
     public Sprite[] sprites_player;
     public Sprite[] sprites_bullets;
     public Sprite[] sprites_monster01;
