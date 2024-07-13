@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem.Utilities;
 
 public class Player {
     public Scene scene;                                 // 指向场景
@@ -15,7 +16,6 @@ public class Player {
 
     public float frameIndex = 0;                        // 当前动画帧下标
     public bool flipX;                                  // 根据移动方向判断要不要反转 x 显示
-    public float lastMoveValueX;                        // 备份，用来判断移动方向，要不要反转 x 显示
 
     public float moveSpeed = 20;                        // 当前每帧移动距离
     public float radius = defaultRadius;                // 半径
@@ -29,7 +29,6 @@ public class Player {
         stage = stage_;
         scene = stage_.scene;
         sprites = sprites_;
-        lastMoveValueX = scene.playerMoveValue.x;
 
         // 从对象池分配 u3d 底层对象
         GO.Pop(ref go);
@@ -48,8 +47,12 @@ public class Player {
             x += mv.x * moveSpeed;
             y += mv.y * moveSpeed;
 
-            // 判断动画绘制方向
-            flipX = scene.playerDirection.x < 0;
+            // 判断绘制 x 坐标要不要翻转
+            if (flipX && mv.x > 0) {
+                flipX = false;
+            } else if (mv.x < 0) {
+                flipX = true;
+            }
 
             // 根据移动速度步进动画帧下表
             frameIndex += frameAnimIncrease * moveSpeed * _1_defaultMoveSpeed;
@@ -63,7 +66,7 @@ public class Player {
         if (x < 0) x = 0;
         else if (x >= Stage.gridWidth) x = Stage.gridWidth - float.Epsilon;
         if (y < 0) y = 0;
-        else if (y >= Stage.gridHeight) x = Stage.gridHeight - float.Epsilon;
+        else if (y >= Stage.gridHeight) y = Stage.gridHeight - float.Epsilon;
 
         // 子弹发射逻辑
         if (nextShootTime < scene.time) {

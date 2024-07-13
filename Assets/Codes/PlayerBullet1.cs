@@ -13,9 +13,10 @@ public class PlayerBullet1 {
     public float moveSpeed = 2;                         // 当前每帧移动距离
     public float radius = defaultRadius;                // 半径
     public float x, y;                                  // grid中的坐标
-    //public float radians;                               // 弧度
     public float incX, incY;                            // 每帧的移动增量
     public int lifeEndTime;                             // 自杀时间点
+
+    // todo: damage 穿刺 支持
 
     public PlayerBullet1(Stage stage_, Sprite sprite_, float x_, float y_, float radians_, int life_) {
         // 各种基础初始化
@@ -27,13 +28,9 @@ public class PlayerBullet1 {
         GO.Pop(ref go);
         go.r.sprite = sprite_;
         go.t.rotation = Quaternion.Euler(0, 0, -radians_ * (180f / Mathf.PI));
-
-        // 初始化数据
         x = x_;
         y = y_;
-        //radians = radians_;
         lifeEndTime = life_ + scene.time;
-
         // 根据角度计算移动增量
         incX = Mathf.Cos(radians_) * moveSpeed;
         incY = Mathf.Sin(radians_) * moveSpeed;

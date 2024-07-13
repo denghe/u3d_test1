@@ -21,6 +21,8 @@ public class Monster : SpaceItem {
     public float moveSpeed = 10;                        // 当前每帧移动距离
 
 
+    // todo: 变白一小会儿状态支持, 血量，显示伤害文字支持
+
     public Monster(Stage stage_, Sprite[] sprites_, float x_, float y_) {
         // 各种基础初始化
         stage = stage_;
@@ -59,7 +61,7 @@ public class Monster : SpaceItem {
         if (x < 0) x = 0;
         else if (x >= Stage.gridWidth) x = Stage.gridWidth - float.Epsilon;
         if (y < 0) y = 0;
-        else if (y >= Stage.gridHeight) x = Stage.gridHeight - float.Epsilon;
+        else if (y >= Stage.gridHeight) y = Stage.gridHeight - float.Epsilon;
 
         // 根据移动速度步进动画帧下表
         frameIndex += frameAnimIncrease * moveSpeed * _1_defaultMoveSpeed;
