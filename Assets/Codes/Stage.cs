@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Unity.Collections;
 using UnityEngine;
 
@@ -26,7 +24,7 @@ public class Stage {
 
     public Transform camTrans;  // cache
     public Player player;
-    public List<PlayerBullet1> playerBullets = new();
+    public List<PlayerBullet> playerBullets = new();
     public List<Monster> monsters = new();
     internal SpaceContainer monstersSpaceContainer;
     public List<Effect_Explosion> effectExplosions = new();
@@ -73,6 +71,40 @@ public class Stage {
         return os.Count > 0;
     }
 
+    // 当前玩家所在屏幕区域边缘随机一个点返回
+    public Vector2 GetRndPosOutSideTheArea() {
+        var e = Random.Range(0, 4);
+        switch (e) {
+            case 0:
+                return new Vector2(player.x + Random.Range(-Scene.designWidth_2, Scene.designWidth_2), player.y - Scene.designHeight_2);
+            case 1:
+                return new Vector2(player.x + Random.Range(-Scene.designWidth_2, Scene.designWidth_2), player.y + Scene.designHeight_2);
+            case 2:
+                return new Vector2(player.x - Scene.designWidth_2, player.y + Random.Range(-Scene.designWidth_2, Scene.designWidth_2));
+            case 3:
+                return new Vector2(player.x + Scene.designWidth_2, player.y + Random.Range(-Scene.designWidth_2, Scene.designWidth_2));
+        }
+        return Vector2.zero;
+    }
+
+    public void GenRndMonster() {
+
+        //// 每一种创建 ?? 只
+        //foreach (var ss in spritess) {
+        //    for (int i = 0; i < 5000; i++) {
+        //        var x = gridCenterX + UnityEngine.Random.Range(-Scene.designWidth_2, Scene.designWidth_2);
+        //        var y = gridCenterY + UnityEngine.Random.Range(-Scene.designHeight_2, Scene.designHeight_2);
+        //        new Monster(this, ss, x, y);
+        //    }
+        //}
+
+        // todo: 补怪逻辑, 阶段性试图凑够多少只同屏
+
+        var ss = spritess[Random.Range(0, spritess.Count)];
+        var p = GetRndPosOutSideTheArea();
+        new Monster(this, ss, p.x, p.y);
+    }
+
     public void Update() {
         switch (state) {
             case 0:
@@ -82,7 +114,7 @@ public class Stage {
                 State1();
                 return;
             default:
-                throw new Exception("???");
+                throw new System.Exception("???");
         }
     }
 
@@ -102,15 +134,6 @@ public class Stage {
             }
         }
 
-        // 每一种创建 ?? 只
-        foreach (var ss in spritess) {
-            for (int i = 0; i < 5000; i++) {
-                var x = gridCenterX + UnityEngine.Random.Range(-Scene.designWidth_2, Scene.designWidth_2);
-                var y = gridCenterY + UnityEngine.Random.Range(-Scene.designHeight_2, Scene.designHeight_2);
-                new Monster(this, ss, x, y);
-            }
-        }
-
         // 创建 Player
         player = new(this, scene.sprites_player, gridCenterX, gridCenterY);
 
@@ -121,10 +144,11 @@ public class Stage {
     }
 
     public void State1() {
+        GenRndMonster();
         MonstersUpdate();
+        player.Update();
         PlayerBulletsUpdate();
         ExplosionsUpdate();
-        player.Update();
     }
 
     public void Draw() {

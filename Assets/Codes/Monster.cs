@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
 public class Monster : SpaceItem {
+    // 各种指向
     public Scene scene;                                 // 指向场景
     public Stage stage;                                 // 指向关卡
     public int indexOfContainer;                        // 自己位于的 stage.monsters 数组的下标
-
     public Sprite[] sprites;                            // 指向动画帧集合
     public GO go;                                       // 保存底层 u3d 资源
 
@@ -20,8 +20,8 @@ public class Monster : SpaceItem {
 
     public float moveSpeed = 10;                        // 当前每帧移动距离
 
-
     // todo: 变白一小会儿状态支持, 血量，显示伤害文字支持
+    // 如果玩家一直向一个方向移动, 被甩在后面的怪，理论上讲可以 "挪动" 到玩家前方去
 
     public Monster(Stage stage_, Sprite[] sprites_, float x_, float y_) {
         // 各种基础初始化

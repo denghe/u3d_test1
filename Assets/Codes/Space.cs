@@ -325,6 +325,93 @@ public class SpaceContainer {
         return null;
     }
 
+    // 遍历坐标所在格子 + 周围  九宫. handler 返回 true 结束遍历( Func 可能产生 gc, 但这种应该是无所谓的, 里面只要不含 unity 资源 )
+    public void Foreach9All(float x, float y, Func<SpaceItem, bool> handler) {
+        // 5
+        int cIdx = (int)(x * _1_cellSize);
+        if (cIdx < 0 || cIdx >= numCols) return;
+        int rIdx = (int)(y * _1_cellSize);
+        if (rIdx < 0 || rIdx >= numRows) return;
+        int idx = rIdx * numCols + cIdx;
+        var c = cells[idx];
+        while (c != null) {
+            var next = c.spaceNext;
+            if (handler(c)) return;
+            c = next;
+        }
+        // 6
+        ++cIdx;
+        if (cIdx >= numCols) return;
+        ++idx;
+        c = cells[idx];
+        while (c != null) {
+            var next = c.spaceNext;
+            if (handler(c)) return;
+            c = next;
+        }
+        // 3
+        ++rIdx;
+        if (rIdx >= numRows) return;
+        idx += numCols;
+        c = cells[idx];
+        while (c != null) {
+            var next = c.spaceNext;
+            if (handler(c)) return;
+            c = next;
+        }
+        // 2
+        --idx;
+        c = cells[idx];
+        while (c != null) {
+            var next = c.spaceNext;
+            if (handler(c)) return;
+            c = next;
+        }
+        // 1
+        cIdx -= 2;
+        if (cIdx < 0) return;
+        --idx;
+        c = cells[idx];
+        while (c != null) {
+            var next = c.spaceNext;
+            if (handler(c)) return;
+            c = next;
+        }
+        // 4
+        idx -= numCols;
+        c = cells[idx];
+        while (c != null) {
+            var next = c.spaceNext;
+            if (handler(c)) return;
+            c = next;
+        }
+        // 7
+        rIdx -= 2;
+        if (rIdx < 0) return;
+        idx -= numCols;
+        c = cells[idx];
+        while (c != null) {
+            var next = c.spaceNext;
+            if (handler(c)) return;
+            c = next;
+        }
+        // 8
+        ++idx;
+        c = cells[idx];
+        while (c != null) {
+            var next = c.spaceNext;
+            if (handler(c)) return;
+            c = next;
+        }
+        // 9
+        ++idx;
+        c = cells[idx];
+        while (c != null) {
+            var next = c.spaceNext;
+            if (handler(c)) return;
+            c = next;
+        }
+    }
 
 
     // 圆形扩散遍历找出 边距最近的 1 个并返回
@@ -518,113 +605,3 @@ public class SpaceRingDiffuseData {
         }
     }
 }
-
-// 部分参考代码
-
-//    // return x: col index   y: row index
-//    public SpaceXYi PosToCrIdx(float x, float y) {
-//#if UNITY_EDITOR
-//        Debug.Assert(x >= 0 && x < maxX);
-//        Debug.Assert(y >= 0 && y < maxY);
-//#endif
-//        return new SpaceXYi { x = (int)(x * _1_cellSize), y = (int)(y * _1_cellSize) };
-//    }
-
-//    // 圆形扩散遍历 ( 供参考，用来复制小改比较好 )
-//    public void ForeachByRange(SpaceRingDiffuseData d, int x, int y, float maxDistance, Func<SpaceItem, bool> handler) {
-//        var crIdxBase = PosToCrIdx(x, y);           // calc grid col row index
-//        float rr = maxDistance * maxDistance;
-//        var lens = d.lens;
-//        var idxs = d.idxs;
-//        for (int i = 1; i < lens.Count; i++) {
-//            var offsets = lens[i - 1].count;
-//            var size = lens[i].count - lens[i - 1].count;
-//            for (int j = 0; j < size; ++j) {
-//                var tmp = idxs[offsets + j];
-//                var cIdx = crIdxBase.x + tmp.x;
-//                if (cIdx < 0 || cIdx >= numCols) continue;
-//                var rIdx = crIdxBase.y + tmp.y;
-//                if (rIdx < 0 || rIdx >= numRows) continue;
-//                var cidx = rIdx * numCols + cIdx;
-//                var c = cells[cidx];
-//                while (c != null) {
-//#if UNITY_EDITOR
-//                    Debug.Assert(cells[c.spaceIndex].spacePrev == null);
-//                    Debug.Assert(c.spaceNext != c);
-//                    Debug.Assert(c.spacePrev != c);
-//#endif
-//                    var vx = c.x - x;
-//                    var vy = c.y - y;
-//                    if (vx * vx + vy * vy < rr) {
-//                        var next = c.spaceNext;
-//                        if (handler(c)) return;
-//                        c = next;
-//                    }
-//                }
-//            }
-//            if (lens[i].radius > maxDistance) break;            // limit search range
-//        }
-//    }
-
-
-//    public void Foreach(int idx, ref int limit, SpaceItem except, Action<SpaceItem> handler) {
-//        if (limit <= 0) return;
-//#if UNITY_EDITOR
-//        Debug.Assert(idx >= 0 && idx < cells.Length);
-//#endif
-//        var c = cells[idx];
-//        while (c != null) {
-//#if UNITY_EDITOR
-//            Debug.Assert(cells[c.spaceIndex].spacePrev == null);
-//            Debug.Assert(c.spaceNext != c);
-//            Debug.Assert(c.spacePrev != c);
-//#endif
-//            var next = c.spaceNext;
-//            if (c != except) {
-//                handler(c);
-//            }
-//            if (--limit <= 0) return;
-//            c = next;
-//        }
-//    }
-
-//    public void Foreach(int rIdx, int cIdx, ref int limit, SpaceItem except, Action<SpaceItem> handler) {
-//        if (rIdx < 0 || rIdx >= numRows) return;
-//        if (cIdx < 0 || cIdx >= numCols) return;
-//        Foreach(rIdx * numCols + cIdx, ref limit, except, handler);
-//    }
-
-//    public void Foreach8NeighborCells(int rIdx, int cIdx, ref int limit, SpaceItem except, Action<SpaceItem> handler) {
-//        Foreach(rIdx + 1, cIdx, ref limit, except, handler);
-//        if (limit <= 0) return;
-//        Foreach(rIdx - 1, cIdx, ref limit, except, handler);
-//        if (limit <= 0) return;
-//        Foreach(rIdx, cIdx + 1, ref limit, except, handler);
-//        if (limit <= 0) return;
-//        Foreach(rIdx, cIdx - 1, ref limit, except, handler);
-//        if (limit <= 0) return;
-//        Foreach(rIdx + 1, cIdx + 1, ref limit, except, handler);
-//        if (limit <= 0) return;
-//        Foreach(rIdx + 1, cIdx - 1, ref limit, except, handler);
-//        if (limit <= 0) return;
-//        Foreach(rIdx - 1, cIdx + 1, ref limit, except, handler);
-//        if (limit <= 0) return;
-//        Foreach(rIdx - 1, cIdx - 1, ref limit, except, handler);
-//    }
-
-//    public void Foreach9NeighborCells(SpaceItem c, ref int limit, Action<SpaceItem> handler) {
-//#if UNITY_EDITOR
-//        Debug.Assert(c != null);
-//#endif
-//        Foreach(c.spaceIndex, ref limit, c, handler);
-//        if (limit <= 0) return;
-//        var rIdx = c.spaceIndex / numCols;
-//        var cIdx = c.spaceIndex - numCols * rIdx;
-//        Foreach8NeighborCells(rIdx, cIdx, ref limit, null, handler);
-//    }
-
-//    public void Foreach9NeighborCells(SpaceXYi crIdx, ref int limit, Action<SpaceItem> handler) {
-//        Foreach(crIdx.y, crIdx.x, ref limit, null, handler);
-//        if (limit <= 0) return;
-//        Foreach8NeighborCells(crIdx.y, crIdx.x, ref limit, null, handler);
-//    }

@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.InputSystem.Utilities;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Player {
     public Scene scene;                                 // 指向场景
@@ -17,12 +17,28 @@ public class Player {
     public float frameIndex = 0;                        // 当前动画帧下标
     public bool flipX;                                  // 根据移动方向判断要不要反转 x 显示
 
-    public float moveSpeed = 20;                        // 当前每帧移动距离
-    public float radius = defaultRadius;                // 半径
-    public float x, y;                                  // grid中的坐标
+    public float radius = defaultRadius;                // 该数值和玩家体积同步
+    public float x, y;                                  // position
+    public List<Vector2> positionHistory = new();       // 历史坐标数组    // todo: 需要自己实现一个 ring buffer 避免 move
+    public float radians {                              // 俯视角度下的角色 前进方向 弧度 ( 可理解为 朝向 )
+        get {
+            return Mathf.Atan2(scene.playerDirection.y, scene.playerDirection.x);
+        }
+    }
+    public int quitInvincibleTime;                      // 退出无敌状态的时间点
 
-    public int nextShootTime;                           // 下次发射时间点
-    public int shootDelay = 0;                          // 发射cd
+
+    public float moveSpeed = 20;                        // 当前每帧移动距离
+
+    public int hp = 100;                                // 当前血量
+    public int maxHp = 100;                             // 血上限
+    public int damage = 10;                             // 当前基础伤害倍率( 技能上面为实际伤害值 )
+    public int defense = 10;                            // 防御力
+    public float criticalRate = 0.05f;                  // 暴击率
+    public float criticalDamageRatio = 1.5f;            // 暴击伤害倍率
+    public float dodgeRate = 0.05f;                     // 闪避率
+    public int getHurtInvincibleTimeSpan = 6;           // 受伤短暂无敌时长( 帧 )
+    public List<PlayerSkill> skills = new();            // 玩家技能数组
 
     public Player(Stage stage_, Sprite[] sprites_, float x_, float y_) {
         // 各种基础初始化
@@ -37,9 +53,12 @@ public class Player {
         // 设置坐标
         x = x_;
         y = y_;
+
+        // 先给自己创建一些初始技能
+        skills.Add(new PlayerSkill(this).Init());
     }
 
-    public virtual bool Update() {
+    public bool Update() {
 
         // 玩家控制移动
         if (scene.playerMoving) {
@@ -68,39 +87,21 @@ public class Player {
         if (y < 0) y = 0;
         else if (y >= Stage.gridHeight) y = Stage.gridHeight - float.Epsilon;
 
-        // 子弹发射逻辑
-        if (nextShootTime < scene.time) {
-            nextShootTime = scene.time + shootDelay;
+        // 将坐标写入历史记录( 限定长度 )
+        positionHistory.Insert(0, new Vector2(x, y));
+        if (positionHistory.Count > 60) {
+            positionHistory.RemoveAt(positionHistory.Count - 1);
+        }
 
-            // 找射程内 距离最近的 最多 10 只 分别朝向其发射子弹. 如果不足 10 只，轮流扫射，直到用光 10 发。0 只 就面对朝向发射
-            var count = 10;
-            var sc = stage.monstersSpaceContainer;
-            var n = sc.FindNearestNByRange(Scene.spaceRDD, x, y, 360, count);
-            if (n > 0) {
-                while (count > 0) {
-                    for (int i = 0; i < n; ++i) {
-                        var o = sc.result_FindNearestN[i].item;
-                        var dy = o.y - y;
-                        var dx = o.x - x;
-                        var r = Mathf.Atan2(dy, dx);
-                        new PlayerBullet1(stage, scene.sprites_bullets[1], x, y, r, 60 * 3);
-                        --count;
-                        if (count == 0) break;
-                    }
-                }
-            } else {
-                var d = scene.playerDirection;
-                var r = Mathf.Atan2(d.y, d.x);
-                for (int i = 0; i < count; ++i) {
-                    new PlayerBullet1(stage, scene.sprites_bullets[1], x, y, r, 60 * 3);
-                }
-            }
+        // 驱动技能
+        foreach (var skill in skills) {
+            skill.Update();
         }
 
         return false;
     }
 
-    public virtual void Draw() {
+    public void Draw() {
         // 同步帧下标
         go.r.sprite = sprites[(int)frameIndex];
 
@@ -112,11 +113,14 @@ public class Player {
         go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
     }
 
-    public virtual void DrawGizmos() {
+    public void DrawGizmos() {
         Gizmos.DrawWireSphere(new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0), radius * Scene.designWidthToCameraRatio);
     }
 
-    public virtual void Destroy() {
+    public void Destroy() {
+        foreach (var skill in skills) {
+            skill.Destroy();
+        }
 #if UNITY_EDITOR
         if (go.g != null)           // unity 点击停止按钮后，这些变量似乎有可能提前变成 null
 #endif
