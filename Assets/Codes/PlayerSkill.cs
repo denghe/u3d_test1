@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Text;
+using UnityEngine;
 
 public class PlayerSkill {
     // 快捷指向
@@ -17,15 +18,15 @@ public class PlayerSkill {
     public float radius = 30;                       // 碰撞检测半径( 和显示放大修正配套 )
     public int damage = 1;                          // 伤害( 倍率 )
     public float moveSpeed = 50;                    // 按照 fps 来算的每一帧的移动距离
-    public int life = Scene.fps * 3;                // 子弹存在时长( 帧 ): fps * 秒
+    public int life = Scene.fps * 1;                // 子弹存在时长( 帧 ): fps * 秒
     public int pierceCount = 50;                    // 最大可穿透次数
     public int pierceDelay = 12;                    // 穿透时间间隔 帧数( 针对相同目标 )
     public int knockbackForce = 0;                  // 击退强度( 退多少帧, 多远 )
 
-    public PlayerSkill(Player player_) {
-        player = player_;
-        scene = player.scene;
-        stage = player.stage;
+    public PlayerSkill(Stage stage_) {
+        stage = stage_;
+        scene = stage_.scene;
+        player = scene.player;
     }
 
     public PlayerSkill Init() {
@@ -47,11 +48,24 @@ public class PlayerSkill {
             // 0 只 就面对朝向发射
             var count = castCount;
             var sc = stage.monstersSpaceContainer;
+            var os = sc.result_FindNearestN;
             var n = sc.FindNearestNByRange(Scene.spaceRDD, x, y, moveSpeed * life, count);
+
+#if false
+            var sb = new StringBuilder();
+            sb.Append($"n = {n} [ ");
+            for (int i = 0; i < n; ++i) {
+                var d = os[i].distance;
+                sb.Append($"{d}, ");
+            }
+            sb.Append("]");
+            Debug.Log(sb.ToString());
+#endif
+
             if (n > 0) {
                 while (count > 0) {
                     for (int i = 0; i < n; ++i) {
-                        var o = sc.result_FindNearestN[i].item;
+                        var o = os[i].item;
                         var dy = o.y - y;
                         var dx = o.x - x;
                         var r = Mathf.Atan2(dy, dx);

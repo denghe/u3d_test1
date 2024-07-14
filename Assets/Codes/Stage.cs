@@ -4,23 +4,6 @@ using UnityEngine;
 
 public class Stage {
 
-    // 大地图格子数量
-    internal const int numRows = 1024, numCols = 1024;
-
-    // 大地图总宽度
-    internal const float gridWidth = numCols * Scene.cellSize;
-
-    // 大地图总高度
-    internal const float gridHeight = numRows * Scene.cellSize;
-
-    // 大地图中心点坐标
-    internal const float gridWidth_2 = gridWidth / 2, gridHeight_2 = gridHeight / 2;
-    internal const float gridCenterX = gridWidth_2, gridCenterY = gridHeight_2;
-
-
-    /*************************************************************************************************************************/
-    /*************************************************************************************************************************/
-
     // 各种引用
     public Scene scene;
     public Player player;
@@ -40,7 +23,7 @@ public class Stage {
     public Stage(Scene scene_) {
         scene = scene_;
         player = scene_.player;
-        monstersSpaceContainer = new(numRows, numCols, Scene.cellSize);
+        monstersSpaceContainer = new(Scene.numRows, Scene.numCols, Scene.cellSize);
         camTrans = Camera.main.transform;
     }
 
@@ -95,14 +78,12 @@ public class Stage {
         foreach (var o in monsterGenerators) {
             o.Destroy();
         }
-        player.Destroy();
         // ...
 
         Debug.Assert(monstersSpaceContainer.numItems == 0);
         monsters.Clear();
         playerBullets.Clear();
         effectExplosions.Clear();
-        player = null;
         // ...
     }
 

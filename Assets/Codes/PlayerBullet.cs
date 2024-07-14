@@ -25,7 +25,7 @@ public class PlayerBullet {
     public float radius;                            // 碰撞检测半径( 和显示放大修正配套 )
     public int damage;                              // 伤害( 倍率 )
     public float moveSpeed;                         // 按照 fps 来算的每一帧的移动距离
-    public int life;                                // 子弹存在时长( 帧 ): fps * 3 秒
+    public int life;                                // 子弹存在时长( 帧 ): fps * 秒
     public int pierceCount;                         // 最大可穿透次数
     public int pierceDelay;                         // 穿透时间间隔 帧数( 针对相同目标 )
     public int knockbackForce;                      // 击退强度( 退多少帧, 多远 )
@@ -84,7 +84,7 @@ public class PlayerBullet {
             // 在 9 宫范围内查询 首个相交
             var m = monstersSpaceContainer.Foreach9FirstHitCheck(x, y, radius);
             if (m != null) {
-                HurtMonster((Monster)m);
+                ((Monster)m).Hurt(damage, knockbackForce);
                 return true;    // 和怪一起死
             }
         } else {
@@ -98,15 +98,10 @@ public class PlayerBullet {
         y += incY;
 
         // 坐标超出 grid地图 范围: 自杀
-        if (x < 0 || x >= Stage.gridWidth || y < 0 || y >= Stage.gridHeight) return true;
+        if (x < 0 || x >= Scene.gridWidth || y < 0 || y >= Scene.gridHeight) return true;
 
         // 生命周期完结: 自杀
         return lifeEndTime < scene.time;
-    }
-
-    public void HurtMonster(Monster m) {
-        new Effect_Explosion(stage, m.x, m.y, radius * _1_defaultRadius);
-        ((Monster)m).Destroy();
     }
 
     public bool HitCheck(SpaceItem m) {
@@ -125,7 +120,7 @@ public class PlayerBullet {
             hitBlackList.Add(new KeyValuePair<SpaceItem, int>(m, scene.time + pierceDelay));
 
             // 伤害怪
-            HurtMonster((Monster)m);
+            ((Monster)m).Hurt(damage, knockbackForce);
 
             // 如果穿刺计数 已用光，停止遍历
             if (this.pierceCount-- == 0) {

@@ -573,35 +573,30 @@ public class SpaceRingDiffuseData {
     public List<SpaceCountRadius> lens = new();
     public List<SpaceXYi> idxs = new();
 
-    public SpaceRingDiffuseData(int crCount, float cellSize) {
-        var _1_cellSize = 1f / cellSize;
-        var step = cellSize * 0.5f;
+    public SpaceRingDiffuseData(int gridNumRows, int cellSize) {
         lens.Add(new SpaceCountRadius { count = 0, radius = 0f });
-        var lastIdx = new SpaceXYi();
-        idxs.Add(lastIdx);
-        var n = crCount * 2;
-        var idxflags = new int[n * n];
-        var center = new SpaceXYi { x = n / 2, y = n / 2 };
-        for (float r = step; r < cellSize * crCount; r += step) {
-            var c = 2 * Math.PI * r;
-            if (c < step) continue;
+        idxs.Add(new SpaceXYi());
+        HashSet<ulong> set = new();
+        for (float radius = 0; radius < cellSize * gridNumRows; radius += cellSize) {
             var lenBak = idxs.Count;
-            var astep = Math.PI * 2 * (step / c) / 10;
-            var rd = r * _1_cellSize;
-            for (var a = astep; a < Math.PI * 2; a += astep) {
-                var idx = new SpaceXYi { x = (int)(rd * Math.Cos(a)), y = (int)(rd * Math.Sin(a)) };
-                if (lastIdx.x != idx.x && lastIdx.y != idx.y) {
-                    var i = (center.y + idx.y) * crCount + (center.x + idx.x);
-                    if (idxflags[i] == 0) {
-                        idxflags[i] = 1;
-                        idxs.Add(idx);
-                        lastIdx = idx;
-                    }
+            var radians = Mathf.Asin(0.5f / radius) * 2;
+            var step = (int)(Mathf.PI * 2 / radians);
+            var inc = Mathf.PI * 2 / step;
+            for (int i = 0; i < step; ++i) {
+                var a = inc * i;
+                var cos = Mathf.Cos(a);
+                var sin = Mathf.Sin(a);
+                var ix = (int)(cos * radius) / cellSize;
+                var iy = (int)(sin * radius) / cellSize;
+                var key = ((ulong)iy << 32) + (ulong)ix;
+                if (set.Add(key)) {
+                    idxs.Add(new SpaceXYi { x = ix, y = iy });
                 }
             }
             if (idxs.Count > lenBak) {
-                lens.Add(new SpaceCountRadius { count = idxs.Count, radius = r });
+                lens.Add(new SpaceCountRadius { count = idxs.Count, radius = radius });
             }
         }
     }
+
 }

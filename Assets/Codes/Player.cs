@@ -55,11 +55,6 @@ public class Player {
         for (int i = 0; i < Scene.fps; i++) {
             positionHistory.Add(p);
         }
-
-        // 先给自己创建一些初始技能
-        // todo: 通过配置来创建. 纯技能并没有什么意义，只有进了关卡之后，才能实例化，开始工作. 也就是说，技能依附于关卡存在。
-        // 玩家在游戏过程中，技能可能会 增加，成长，都应该写进 配置。 这样切换关卡后，可以根据配置 再次创建技能
-        skills.Add(new PlayerSkill(this).Init());
     }
 
     public bool Update() {
@@ -86,9 +81,9 @@ public class Player {
 
             // 强行限制移动范围( 理论上讲也可以设计一些临时限制，比如 boss 禁锢 )
             if (x < 0) x = 0;
-            else if (x >= Stage.gridWidth) x = Stage.gridWidth - float.Epsilon;
+            else if (x >= Scene.gridWidth) x = Scene.gridWidth - float.Epsilon;
             if (y < 0) y = 0;
-            else if (y >= Stage.gridHeight) y = Stage.gridHeight - float.Epsilon;
+            else if (y >= Scene.gridHeight) y = Scene.gridHeight - float.Epsilon;
         }
 
         // 将坐标写入历史记录( 限定长度 )
@@ -115,6 +110,13 @@ public class Player {
         // 同步 & 坐标系转换( y 坐标需要反转 )
         go.t.position = new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0);
         go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
+
+        // 短暂无敌用变白表达
+        if (scene.time <= quitInvincibleTime) {
+            go.SetColorWhite();
+        } else {
+            go.SetColorNormal();
+        }
     }
 
     public void DrawGizmos() {

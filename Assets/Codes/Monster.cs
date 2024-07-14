@@ -25,8 +25,8 @@ public class Monster : SpaceItem {
     public float tarOffsetX, tarOffsetY;                // 追赶玩家时的目标坐标偏移量( 防止放风筝时重叠到一起 )
     public int aimDelay = 29;                           // 瞄准玩家的延迟( 0 ~ 59 )( 获取玩家坐标走 history, 这是下标 )
     public int damage = 10;                             // 怪伤害值
-    public int hp = 50;                                 // 怪血量
-    public float moveSpeed = 7;                         // 每一帧的移动距离
+    public int hp = 20;                                 // 怪血量
+    public float moveSpeed = 5;                         // 每一帧的移动距离
 
     public int knockbackEndTime;                        // 被击退结束时间点
     public float knockbackDecay = 0.01f;                // 被击退移动增量衰减值
@@ -34,7 +34,7 @@ public class Monster : SpaceItem {
     public float knockbackIncX, knockbackIncY;          // 被击退移动增量 实际 x += inc * rate
 
     public int whiteEndTime;                            // 变白结束时间( 受伤会变白 )
-    public const int whiteDelay = 12;                   // 受伤变白的时长. 反复受伤就会重置变白结束时间
+    public const int whiteDelay = 10;                   // 受伤变白的时长. 反复受伤就会重置变白结束时间
 
     // todo: 血量，显示伤害文字支持
 
@@ -102,9 +102,9 @@ public class Monster : SpaceItem {
         // 如果玩家快速移动导致怪被甩在后面很远，可以将怪 "挪" 到玩家前方去. 或许直接重新随机坐标位置会比较科学
         // 强行限制移动范围
         if (x < 0) x = 0;
-        else if (x >= Stage.gridWidth) x = Stage.gridWidth - float.Epsilon;
+        else if (x >= Scene.gridWidth) x = Scene.gridWidth - float.Epsilon;
         if (y < 0) y = 0;
-        else if (y >= Stage.gridHeight) y = Stage.gridHeight - float.Epsilon;
+        else if (y >= Scene.gridHeight) y = Scene.gridHeight - float.Epsilon;
 
         // 根据移动速度步进动画帧下表
         frameIndex += frameAnimIncrease * moveSpeed * _1_defaultMoveSpeed;
@@ -197,7 +197,10 @@ public class Monster : SpaceItem {
                 knockbackDecay = 1 / knockbackForce;
                 knockbackIncX = -Mathf.Cos(radians) * moveSpeed;
                 knockbackIncY = -Mathf.Sin(radians) * moveSpeed;
-            }   
+            }
+
+            // 变白一会儿
+            whiteEndTime = scene.time + whiteDelay;
 
             return false;
 

@@ -24,6 +24,20 @@ public partial class Scene : MonoBehaviour {
     public Sprite[] sprites_monster08;
     // ...
 
+
+    // 大地图格子数量
+    internal const int numRows = 1024, numCols = 1024;
+
+    // 大地图总宽度
+    internal const float gridWidth = numCols * Scene.cellSize;
+
+    // 大地图总高度
+    internal const float gridHeight = numRows * Scene.cellSize;
+
+    // 大地图中心点坐标
+    internal const float gridWidth_2 = gridWidth / 2, gridHeight_2 = gridHeight / 2;
+    internal const float gridCenterX = gridWidth_2, gridCenterY = gridHeight_2;
+
     // 逻辑帧率
     internal const int fps = 60;
 
@@ -59,7 +73,7 @@ public partial class Scene : MonoBehaviour {
     internal Stage stage;
 
     // 空间索引容器 要用到的找最近所需要的格子偏移数组( all stage 公用 )
-    internal static SpaceRingDiffuseData spaceRDD = new(100, cellSize);
+    internal static SpaceRingDiffuseData spaceRDD = new(100, (int)cellSize);
 
 
     void Start() {
@@ -81,7 +95,7 @@ public partial class Scene : MonoBehaviour {
         player = new Player(this);
 
         // 初始化起始关卡
-        stage = new Stage1(this);
+        stage = new Stage2(this);
     }
 
     void Update() {

@@ -56,6 +56,8 @@ public struct GO {
 #endif
         o.Disable();
         o.SetColorNormal();
+        o.g.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+        o.g.transform.localScale = Vector3.one;
         pool.Push(o);
         o.g = null;
         o.r = null;
