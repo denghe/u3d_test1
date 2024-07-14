@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerSkill {
     // 快捷指向
@@ -17,8 +16,8 @@ public class PlayerSkill {
     // 创建子弹时，复制到子弹上
     public float radius = 30;                       // 碰撞检测半径( 和显示放大修正配套 )
     public int damage = 1;                          // 伤害( 倍率 )
-    public float moveSpeed = 50;                    // 按照 60 fps 来算的每一帧的移动距离
-    public int life = 180;                          // 子弹存在时长( 帧 ): 60 fps * 3 秒
+    public float moveSpeed = 50;                    // 按照 fps 来算的每一帧的移动距离
+    public int life = Scene.fps * 3;                // 子弹存在时长( 帧 ): fps * 秒
     public int pierceCount = 50;                    // 最大可穿透次数
     public int pierceDelay = 12;                    // 穿透时间间隔 帧数( 针对相同目标 )
     public int knockbackForce = 0;                  // 击退强度( 退多少帧, 多远 )

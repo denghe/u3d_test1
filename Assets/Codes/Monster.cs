@@ -1,62 +1,105 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Monster : SpaceItem {
     // 各种指向
     public Scene scene;                                 // 指向场景
     public Stage stage;                                 // 指向关卡
-    public int indexOfContainer;                        // 自己位于的 stage.monsters 数组的下标
+    public Player player;                               // 指向玩家
+    public List<Monster> monsters;                      // 指向关卡怪数组
+    public int indexOfContainer;                        // 自己位于关卡怪数组的下标
     public Sprite[] sprites;                            // 指向动画帧集合
     public GO go;                                       // 保存底层 u3d 资源
 
     public const float defaultMoveSpeed = 20;           // 原始移动速度
     public const float _1_defaultMoveSpeed = 1f / defaultMoveSpeed; // 倒数, 转除法为乘法
     public const float frameAnimIncrease = 1f / 5;      // 帧动画前进速度( 针对 defaultMoveSpeed )
-    public const float displayScale = 1f;               // 显示放大修正
+    public const float displayBaseScale = 1f;           // 显示放大修正
     public const float defaultRadius = 10f;             // 原始半径
+    public const float _1_defaultRadius = 1f / defaultRadius;
 
     public float frameIndex = 0;                        // 当前动画帧下标
     public bool flipX;                                  // 根据移动方向判断要不要反转 x 显示
-    public float lastMoveValueX;                        // 备份，用来判断移动方向，要不要反转 x 显示
+    public float radians;                               // 最后移动朝向
 
-    public float moveSpeed = 10;                        // 当前每帧移动距离
+    public float tarOffsetX, tarOffsetY;                // 追赶玩家时的目标坐标偏移量( 防止放风筝时重叠到一起 )
+    public int aimDelay = 29;                           // 瞄准玩家的延迟( 0 ~ 59 )( 获取玩家坐标走 history, 这是下标 )
+    public int damage = 10;                             // 怪伤害值
+    public int hp = 50;                                 // 怪血量
+    public float moveSpeed = 7;                         // 每一帧的移动距离
 
-    // todo: 变白一小会儿状态支持, 血量，显示伤害文字支持
-    // 如果玩家一直向一个方向移动, 被甩在后面的怪，理论上讲可以 "挪动" 到玩家前方去
+    public int knockbackEndTime;                        // 被击退结束时间点
+    public float knockbackDecay = 0.01f;                // 被击退移动增量衰减值
+    public float knockbackIncRate = 1;                  // 被击退移动增量倍率 每帧 -= decay
+    public float knockbackIncX, knockbackIncY;          // 被击退移动增量 实际 x += inc * rate
 
-    public Monster(Stage stage_, Sprite[] sprites_, float x_, float y_) {
-        // 各种基础初始化
+    public int whiteEndTime;                            // 变白结束时间( 受伤会变白 )
+    public const int whiteDelay = 12;                   // 受伤变白的时长. 反复受伤就会重置变白结束时间
+
+    // todo: 血量，显示伤害文字支持
+
+    public Monster(Stage stage_) {
+        spaceContainer = stage_.monstersSpaceContainer;
         stage = stage_;
+        player = stage_.player;
         scene = stage_.scene;
-        indexOfContainer = stage.monsters.Count;
-        stage.monsters.Add(this);
-        sprites = sprites_;
+        monsters = stage_.monsters;
 
-        // 从对象池分配 u3d 底层对象
+        indexOfContainer = monsters.Count;
+        monsters.Add(this);
+
         GO.Pop(ref go);
-        go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
+    }
 
-        if (Random.Range(0f, 1f) > 0.5f) {
-            go.SetColorWhite();
-        }
-
-        // 放入空间索引容器
-        spaceContainer = stage.monstersSpaceContainer;
+    public void Init(Sprite[] sprites_, float x_, float y_) {
+        sprites = sprites_;
+        flipX = x_ >= player.x;
         x = x_;
         y = y_;
         radius = defaultRadius;
-        spaceContainer.Add(this);
-        //Debug.Log($"spaceIndex = {spaceIndex}");
+        spaceContainer.Add(this);   // 放入空间索引容器
     }
 
+    // 返回 true 表示 怪需要自杀( 自爆 消散 啥的? ). 派生类需要处理击退: if (knockbackEndTime >= scene.time) return base.Update();
+    // 追赶并贴身直接伤害玩家
     public virtual bool Update() {
+        if (knockbackEndTime >= scene.time) {  // 被击退中
+            x += knockbackIncX * knockbackIncRate;   // 位移
+            y += knockbackIncY * knockbackIncRate;
+            knockbackIncRate -= knockbackDecay;  // 衰减
+                                        
+            spaceContainer.Update(this);    // 更新在空间索引容器中的位置
+            return false;
+        }
 
-        // 随机角度移动
-        var r = Random.Range(0f, Mathf.PI * 2);
-        var sin = Mathf.Sin(r);
-        var cos = Mathf.Cos(r);
-        x += cos * moveSpeed;
-        y += sin * moveSpeed;
+        // 判断是否已接触到 玩家. 接触到就造成伤害, 没接触到就继续移动
+        var dx = player.x - x;
+        var dy = player.y - y;
+        var dd = dx * dx + dy * dy;
+        var r2 = player.radius + radius;
+        if (dd < r2 * r2) {
+            player.Hurt(damage);
+        } else {
+            // 判断是否已到达 偏移点. 已到达: 重新选择偏移点. 未到达: 移动
+            var ph = player.positionHistory[aimDelay];     // 获取玩家历史坐标来追击 以显得怪笨
+            dx = ph.x - x + tarOffsetX;
+            dy = ph.y - y + tarOffsetY;
+            dd = dx * dx + dy * dy;
+            if (dd < radius * radius) {
+                var p = stage.GetRndPosDoughnut(200f, 10f); // 已靠近偏移点：重置偏移
+                tarOffsetX = p.x;
+                tarOffsetY = p.y;
+            }
+            // 计算移动方向并增量
+            radians = Mathf.Atan2(dy, dx);
+            var cos = Mathf.Cos(radians);
+            x += cos * moveSpeed;
+            y += Mathf.Sin(radians) * moveSpeed;
+            flipX = cos < 0;
+        }
 
+        // todo: 不能太边缘，需要留一段安全距离，一是屏幕边缘生成，二是击退，都要留出余量
+        // 如果玩家快速移动导致怪被甩在后面很远，可以将怪 "挪" 到玩家前方去. 或许直接重新随机坐标位置会比较科学
         // 强行限制移动范围
         if (x < 0) x = 0;
         else if (x >= Stage.gridWidth) x = Stage.gridWidth - float.Epsilon;
@@ -70,8 +113,7 @@ public class Monster : SpaceItem {
             frameIndex -= len;
         }
 
-        // 更新在空间索引容器中的位置
-        spaceContainer.Update(this);
+        spaceContainer.Update(this);    // 更新在空间索引容器中的位置
         return false;
     }
 
@@ -89,6 +131,17 @@ public class Monster : SpaceItem {
 
             // 同步 & 坐标系转换( y 坐标需要反转 )
             go.t.position = new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0);
+
+            // 同步尺寸缩放( 根据半径推送算 )
+            var s = displayBaseScale * radius * _1_defaultRadius;
+            go.t.localScale = new Vector3(s, s, s);
+
+            // 看情况变色
+            if (scene.time >= whiteEndTime) {
+                go.SetColorNormal();
+            } else {
+                go.SetColorWhite();
+            }
         }
     }
 
@@ -117,5 +170,38 @@ public class Monster : SpaceItem {
             ms[indexOfContainer] = last;
             ms.RemoveAt(lastIndex);
         }
+    }
+
+    // 令怪受伤, 播特效. 返回怪是否 已死亡. 已死亡将从数组移除该怪( !!! 重要 : 需位于 倒循环 for 内 )
+    public bool Hurt(int playerBulletDamage, int knockbackForce) {
+
+        // 结合暴击算最终伤害值
+        var d = playerBulletDamage * player.damage;
+        if (Random.value <= player.criticalRate) {
+            d = (int)(d * player.criticalDamageRatio);
+        }
+
+        if (hp <= d) {
+            // 怪被打死: 删, 播特效
+            new Effect_Explosion(stage, x, y, radius * _1_defaultRadius);
+            Destroy();
+            return true;
+        } else {
+            // 怪没死: 播飙血特效( todo )
+            hp -= d;
+
+            // 击退?
+            if (knockbackForce > 0) {
+                knockbackEndTime = scene.time + knockbackForce;
+                knockbackIncRate = 1;
+                knockbackDecay = 1 / knockbackForce;
+                knockbackIncX = -Mathf.Cos(radians) * moveSpeed;
+                knockbackIncY = -Mathf.Sin(radians) * moveSpeed;
+            }   
+
+            return false;
+
+        }
+
     }
 }

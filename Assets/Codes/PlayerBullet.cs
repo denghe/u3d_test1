@@ -24,8 +24,8 @@ public class PlayerBullet {
     // 这些属性从 skill copy
     public float radius;                            // 碰撞检测半径( 和显示放大修正配套 )
     public int damage;                              // 伤害( 倍率 )
-    public float moveSpeed;                         // 按照 60 fps 来算的每一帧的移动距离
-    public int life;                                // 子弹存在时长( 帧 ): 60 fps * 3 秒
+    public float moveSpeed;                         // 按照 fps 来算的每一帧的移动距离
+    public int life;                                // 子弹存在时长( 帧 ): fps * 3 秒
     public int pierceCount;                         // 最大可穿透次数
     public int pierceDelay;                         // 穿透时间间隔 帧数( 针对相同目标 )
     public int knockbackForce;                      // 击退强度( 退多少帧, 多远 )
@@ -105,7 +105,6 @@ public class PlayerBullet {
     }
 
     public void HurtMonster(Monster m) {
-        // todo: 令怪减血, 一段时间变白? 可能需要修改 shader 增加一个颜色乘法
         new Effect_Explosion(stage, m.x, m.y, radius * _1_defaultRadius);
         ((Monster)m).Destroy();
     }

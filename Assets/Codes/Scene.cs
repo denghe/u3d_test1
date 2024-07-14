@@ -1,5 +1,4 @@
 ﻿using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 // 显示设置改为 dx12 可在 editor 里观察 hdr 效果
@@ -23,12 +22,10 @@ public partial class Scene : MonoBehaviour {
     public Sprite[] sprites_monster06;
     public Sprite[] sprites_monster07;
     public Sprite[] sprites_monster08;
-    public Sprite[] sprites_monster09;
     // ...
 
-
     // 逻辑帧率
-    internal const float fps = 60;
+    internal const int fps = 60;
 
     // 逻辑帧率间隔时长
     internal const float frameDelay = 1.0f / fps;
@@ -55,6 +52,9 @@ public partial class Scene : MonoBehaviour {
     // 用于稳定调用 逻辑 Update 的时间累计变量
     internal float timePool = 0;
 
+    // 当前玩家( 玩家可跨越关卡存在, 故放置在此 )
+    internal Player player;
+
     // 当前关卡
     internal Stage stage;
 
@@ -74,11 +74,14 @@ public partial class Scene : MonoBehaviour {
             Debug.Log(e);
         }
 
-        // 初始化对象池
+        // 初始化 底层绘制对象池
         GO.Init(material, 20000);
 
+        // 初始化 玩家
+        player = new Player(this);
+
         // 初始化起始关卡
-        stage = new Stage(this);
+        stage = new Stage1(this);
     }
 
     void Update() {
@@ -113,3 +116,18 @@ public partial class Scene : MonoBehaviour {
     }
 
 }
+
+
+//// 利用反射来读取 Scene 里面的怪物配置
+//var st = typeof(Scene);
+//var fs = st.GetFields(BindingFlags.Public | BindingFlags.Instance);
+//foreach (var f in fs) {
+//    if (f.FieldType.Name == "Sprite[]") {
+//        if (f.Name.StartsWith("sprites_monster")) {
+//            var ss = f.GetValue(scene) as Sprite[];
+//            if (ss.Length > 0) {
+//                spritess.Add(ss);
+//            }
+//        }
+//    }
+//}
