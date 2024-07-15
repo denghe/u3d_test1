@@ -41,25 +41,32 @@ public class Stage {
         // 剔除 & 同步 GO
         var cx = player.x;
         var cy = player.y;
-        foreach (var o in monsters) {
-            o.Draw(cx, cy);
+
+        var len = monsters.Count;
+        for (int i = 0; i < len; ++i) {
+            monsters[i].Draw(cx, cy);
         }
-        foreach (var o in playerBullets) {
-            o.Draw(cx, cy);
+        len = playerBullets.Count;
+        for (int i = 0; i < len; ++i) {
+            playerBullets[i].Draw(cx, cy);
         }
-        foreach (var o in effectExplosions) {
-            o.Draw(cx, cy);
+        len = effectExplosions.Count;
+        for (int i = 0; i < len; ++i) {
+            effectExplosions[i].Draw(cx, cy);
         }
+
         player.Draw();
     }
 
 
     public virtual void DrawGizmos() {
-        foreach (var o in monsters) {
-            o.DrawGizmos();
+        var len = monsters.Count;
+        for (int i = 0; i < len; ++i) {
+            monsters[i].DrawGizmos();
         }
-        foreach (var o in playerBullets) {
-            o.DrawGizmos();
+        len = playerBullets.Count;
+        for (int i = 0; i < len; ++i) {
+            playerBullets[i].DrawGizmos();
         }
         player.DrawGizmos();
     }

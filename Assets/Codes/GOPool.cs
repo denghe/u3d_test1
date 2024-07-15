@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-// 底层对象池( 未来直接玩 shader 填 buf 后可抛弃 )
+// 底层对象池
 public struct GO {
     public GameObject g;
     public SpriteRenderer r;
@@ -34,8 +34,10 @@ public struct GO {
         r.color = new Color(minVal, minVal, minVal, 1f);
     }
 
-    // 测试一下对象池 看看是否省 cpu
+    // 对象池
     public static Stack<GO> pool;
+
+    // 统一材质
     public static Material material;
 
     // 从对象池拿 GO 并返回. 没有就新建
