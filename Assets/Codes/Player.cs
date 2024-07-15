@@ -46,7 +46,7 @@ public class Player {
         GO.Pop(ref mgo, 3, "MiniMap");
         mgo.Enable();
         mgo.r.sprite = scene.sprites_player[0];
-        mgo.r.material = scene.material_minimap;
+        mgo.r.material = scene.minimap_material;
         mgo.t.localScale = new Vector3(4, 4, 4);
     }
 
