@@ -38,7 +38,7 @@ public class Monster : SpaceItem {
 
     // todo: 血量，显示伤害文字支持
 
-    public Monster(Stage stage_) {
+    protected Monster(Stage stage_) {
         spaceContainer = stage_.monstersSpaceContainer;
         stage = stage_;
         player = stage_.player;
@@ -184,11 +184,13 @@ public class Monster : SpaceItem {
         if (hp <= d) {
             // 怪被打死: 删, 播特效
             new Effect_Explosion(stage, x, y, radius * _1_defaultRadius);
+            new Effect_Number(stage, x, y, 2, hp);
             Destroy();
             return true;
         } else {
             // 怪没死: 播飙血特效( todo )
             hp -= d;
+            new Effect_Number(stage, x, y, 2, d);
 
             // 击退?
             if (knockbackForce > 0) {

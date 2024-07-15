@@ -21,9 +21,8 @@ public class Effect_Explosion {
 
         // 从对象池分配 u3d 底层对象
         GO.Pop(ref go, "FG");
-        go.Enable();
-        go.t.rotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
-        go.t.position = new Vector3(x_ * Scene.designWidthToCameraRatio, -y_ * Scene.designWidthToCameraRatio, 0);
+        go.t.SetPositionAndRotation(new Vector3(x_ * Scene.designWidthToCameraRatio, -y_ * Scene.designWidthToCameraRatio, 0)
+            , Quaternion.Euler(0, 0, Random.Range(0f, 360f)));
         var s = displayBaseScale * scale_;
         go.t.localScale = new Vector3(s, s, s);
         x = x_;

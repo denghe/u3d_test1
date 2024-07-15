@@ -93,9 +93,11 @@ public class Player {
         }
 
         // 驱动技能
-        var len = skills.Count;
-        for (int i = 0; i < len; ++i) {
-            skills[i].Update();
+        {
+            var len = skills.Count;
+            for (int i = 0; i < len; ++i) {
+                skills[i].Update();
+            }
         }
 
         return false;

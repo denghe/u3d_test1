@@ -42,20 +42,22 @@ public class Stage2 : Stage {
     }
 
     public void P1() {
-        ExplosionsUpdate();
-        MonstersUpdate();
-        if (MonstersGeneratorsUpdate() == 0) {      // 怪生成器 已经没了
+        Update_Effect_Explosions();
+        Update_Effect_Numbers();
+        Update_Monsters();
+        if (Update_MonstersGenerators() == 0) {      // 怪生成器 已经没了
             timeout = scene.time + Scene.fps * 5;   // 设置 5 秒超时
             state = 2;
         }
-        PlayerBulletsUpdate();
+        Update_PlayerBullets();
         player.Update();
     }
 
     public void P2() {
-        ExplosionsUpdate();
-        MonstersUpdate();
-        PlayerBulletsUpdate();
+        Update_Effect_Explosions();
+        Update_Effect_Numbers();
+        Update_Monsters();
+        Update_PlayerBullets();
         player.Update();
         if (timeout < scene.time) {
             scene.SetStage(new Stage1(scene));      // 已超时：切到新关卡

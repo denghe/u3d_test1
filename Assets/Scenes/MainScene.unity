@@ -297,7 +297,7 @@ MonoBehaviour:
   m_Intensity: 5
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 000000005d70da7c83e176f3
+  m_ApplyToSortingLayers: 000000005d70da7c83e176f3f948fa3e
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -353,7 +353,6 @@ GameObject:
   - component: {fileID: 801915738}
   - component: {fileID: 801915739}
   - component: {fileID: 801915740}
-  - component: {fileID: 801915741}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -511,20 +510,6 @@ MonoBehaviour:
   - {fileID: 871522148, guid: 87195734d2b541646b909876ad83d322, type: 3}
   - {fileID: -1694914563, guid: 87195734d2b541646b909876ad83d322, type: 3}
   - {fileID: -1014201635, guid: 87195734d2b541646b909876ad83d322, type: 3}
-  sprites_monster09: []
---- !u!114 &801915741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 801915736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4babd2848026ff94592d81536cc5e4e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  size: 20
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

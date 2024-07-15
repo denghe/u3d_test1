@@ -6,7 +6,7 @@
     public int activeTime, destroyTime;
     public int generateDelay, nextGenerateTime;
 
-    public MonsterGenerator(string name_, Stage stage_, int activeTime_, int destroyTime_, int generateDelay_) {
+    protected MonsterGenerator(string name_, Stage stage_, int activeTime_, int destroyTime_, int generateDelay_) {
         name = name_;
         stage = stage_;
         scene = stage_.scene;

@@ -47,3 +47,6 @@ TagManager:
   - name: FG
     uniqueID: 4084654467
     locked: 0
+  - name: FG2
+    uniqueID: 1056590073
+    locked: 0

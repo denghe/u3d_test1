@@ -14,13 +14,14 @@ public class Stage {
     public List<Monster> monsters = new();
     public SpaceContainer monstersSpaceContainer;
     public List<Effect_Explosion> effectExplosions = new();
+    public List<Effect_Number> effectNumbers = new();
     public List<MonsterGenerator> monsterGenerators = new();
 
 
     /*************************************************************************************************************************/
     /*************************************************************************************************************************/
 
-    public Stage(Scene scene_) {
+    protected Stage(Scene scene_) {
         scene = scene_;
         player = scene_.player;
         monstersSpaceContainer = new(Scene.numRows, Scene.numCols, Scene.cellSize);
@@ -54,6 +55,10 @@ public class Stage {
         for (int i = 0; i < len; ++i) {
             effectExplosions[i].Draw(cx, cy);
         }
+        len = effectNumbers.Count;
+        for (int i = 0; i < len; ++i) {
+            effectNumbers[i].Draw(cx, cy);
+        }
 
         player.Draw();
     }
@@ -82,6 +87,9 @@ public class Stage {
         foreach (var o in effectExplosions) {
             o.Destroy();
         }
+        foreach (var o in effectNumbers) {
+            o.Destroy();
+        }
         foreach (var o in monsterGenerators) {
             o.Destroy();
         }
@@ -91,6 +99,7 @@ public class Stage {
         monsters.Clear();
         playerBullets.Clear();
         effectExplosions.Clear();
+        effectNumbers.Clear();
         // ...
     }
 
@@ -100,7 +109,7 @@ public class Stage {
 
 
     // 执行怪生成配置并返回是否已经全部执行完毕
-    public int MonstersGeneratorsUpdate() {
+    public int Update_MonstersGenerators() {
         var time = scene.time;
         for (int i = monsterGenerators.Count - 1; i >= 0; i--) {
             var mg = monsterGenerators[i];
@@ -116,7 +125,7 @@ public class Stage {
     }
 
     // 驱动所有怪
-    public int MonstersUpdate() {
+    public int Update_Monsters() {
         var os = monsters;
         for (int i = os.Count - 1; i >= 0; i--) {
             var o = os[i];
@@ -128,7 +137,7 @@ public class Stage {
     }
 
     // 驱动所有爆炸特效
-    public int ExplosionsUpdate() {
+    public int Update_Effect_Explosions() {
         var os = effectExplosions;
         for (int i = os.Count - 1; i >= 0; i--) {
             var o = os[i];
@@ -140,8 +149,21 @@ public class Stage {
         return os.Count;
     }
 
+    // 驱动所有数字特效
+    public int Update_Effect_Numbers() {
+        var os = effectNumbers;
+        for (int i = os.Count - 1; i >= 0; i--) {
+            var o = os[i];
+            if (o.Update()) {
+                os.RemoveAtSwapBack(i); // 从数组移除
+                o.Destroy();    // 资源回收. 并不会自动从数组移除
+            }
+        }
+        return os.Count;
+    }
+
     // 驱动所有玩家子弹
-    public int PlayerBulletsUpdate() {
+    public int Update_PlayerBullets() {
         var os = playerBullets;
         for (int i = os.Count - 1; i >= 0; i--) {
             var o = os[i];
@@ -154,7 +176,7 @@ public class Stage {
     }
 
     // 驱动所有玩家
-    public int PlayerUpdate() {
+    public int Update_Player() {
         player.Update();
         return 1;
     }
