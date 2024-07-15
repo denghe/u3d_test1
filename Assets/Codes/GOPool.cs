@@ -56,13 +56,14 @@ public struct GO {
 
 
     // 从对象池拿 GO 并返回. 没有就新建
-    public static void Pop(ref GO o, string sortingLayerName = "Default") {
+    public static void Pop(ref GO o, int layer = 0, string sortingLayerName = "Default") {
 #if UNITY_EDITOR
         Debug.Assert(o.g == null);
 #endif
         if (!pool.TryPop(out o)) {
             o = New();
         }
+        o.g.layer = layer;
         o.r.sortingLayerName = sortingLayerName;
     }
 
@@ -73,6 +74,7 @@ public struct GO {
 #endif
         o.Disable();
         o.SetColorNormal();
+        o.r.material = material;
         o.g.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         o.g.transform.localScale = Vector3.one;
         pool.Push(o);

@@ -5,8 +5,7 @@ using UnityEngine;
 public class Player {
     public Scene scene;                                 // 指向场景
     public Stage stage;                                 // 指向关卡
-
-    public GO go;                                       // 保存底层 u3d 资源
+    public GO go, mgo;                                  // 保存底层 u3d 资源. mgo: mini map 用到的那份
 
     public const float defaultMoveSpeed = 20;           // 原始移动速度
     public const float _1_defaultMoveSpeed = 1f / defaultMoveSpeed;
@@ -40,8 +39,15 @@ public class Player {
 
     public Player(Scene scene_) {
         scene = scene_;
+
         GO.Pop(ref go);
-        go.Enable();        // 因为少，故一直启用即可，就不裁剪了
+        go.Enable();
+
+        GO.Pop(ref mgo, 3, "MiniMap");
+        mgo.Enable();
+        mgo.r.sprite = scene.sprites_player[0];
+        mgo.r.material = scene.material_minimap;
+        mgo.t.localScale = new Vector3(4, 4, 4);
     }
 
     public void Init(Stage stage_, float x_, float y_) {
@@ -111,7 +117,8 @@ public class Player {
         go.r.flipX = flipX;
 
         // 同步 & 坐标系转换( y 坐标需要反转 )
-        go.t.position = new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0);
+        var p = new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0);
+        go.t.position = p;
         go.t.localScale = new Vector3(displayScale, displayScale, displayScale);
 
         // 短暂无敌用变白表达
@@ -120,6 +127,8 @@ public class Player {
         } else {
             go.SetColorNormal();
         }
+
+        mgo.t.position = p;
     }
 
     public void DrawGizmos() {
@@ -131,11 +140,16 @@ public class Player {
             skill.Destroy();
         }
 #if UNITY_EDITOR
-        if (go.g != null)           // unity 点击停止按钮后，这些变量似乎有可能提前变成 null
+        if (go.g != null)
 #endif
         {
-            // 将 u3d 底层对象返回池
             GO.Push(ref go);
+        }
+#if UNITY_EDITOR
+        if (mgo.g != null)
+#endif
+        {
+            GO.Push(ref mgo);
         }
     }
 

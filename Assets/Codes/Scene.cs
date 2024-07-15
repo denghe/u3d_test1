@@ -9,6 +9,9 @@ public partial class Scene : MonoBehaviour {
     // 编辑器中拖拽 带法线的材质球到此 ( texture packer 插件 生成的那个, 需要核查法线贴图是否正确 )
     public Material material;
 
+    // 这个拖 Packages\Universal\Materials\Sprite-Unlit-Default
+    public Material material_minimap;
+
     // 编辑器中 分组, 多选 拖拽 精灵图集到此 ( texture packer 插件 生成的那个, 展开再 shift 多选 )
     public Sprite[] sprites_numbers;
     public Sprite[] sprites_explosions;

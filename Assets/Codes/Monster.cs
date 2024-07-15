@@ -9,7 +9,7 @@ public class Monster : SpaceItem {
     public List<Monster> monsters;                      // 指向关卡怪数组
     public int indexOfContainer;                        // 自己位于关卡怪数组的下标
     public Sprite[] sprites;                            // 指向动画帧集合
-    public GO go;                                       // 保存底层 u3d 资源
+    public GO go, mgo;                                  // 保存底层 u3d 资源. mgo: mini map 用到的那份
 
     public const float defaultMoveSpeed = 20;           // 原始移动速度
     public const float _1_defaultMoveSpeed = 1f / defaultMoveSpeed; // 倒数, 转除法为乘法
@@ -49,10 +49,16 @@ public class Monster : SpaceItem {
         monsters.Add(this);
 
         GO.Pop(ref go);
+
+        GO.Pop(ref mgo, 3, "MiniMap");
+        mgo.r.material = scene.material_minimap;
+        mgo.t.localScale = new Vector3(4, 4, 4);
+        //mgo.r.color = Color.red;
     }
 
     public void Init(Sprite[] sprites_, float x_, float y_) {
         sprites = sprites_;
+        mgo.r.sprite = sprites[0];
         flipX = x_ >= player.x;
         x = x_;
         y = y_;
@@ -67,7 +73,7 @@ public class Monster : SpaceItem {
             x += knockbackIncX * knockbackIncRate;   // 位移
             y += knockbackIncY * knockbackIncRate;
             knockbackIncRate -= knockbackDecay;  // 衰减
-                                        
+
             spaceContainer.Update(this);    // 更新在空间索引容器中的位置
             return false;
         }
@@ -143,6 +149,16 @@ public class Monster : SpaceItem {
                 go.SetColorWhite();
             }
         }
+
+        if (x < cx - Scene.designWidth * 2
+            || x > cx + Scene.designWidth * 2
+            || y < cy - Scene.designHeight * 2
+            || y > cy + Scene.designHeight * 2) {
+            mgo.Disable();
+        } else {
+            mgo.Enable();
+            mgo.t.position = new Vector3(x * Scene.designWidthToCameraRatio, -y * Scene.designWidthToCameraRatio, 0);
+        }
     }
 
     public virtual void DrawGizmos() {
@@ -151,11 +167,16 @@ public class Monster : SpaceItem {
 
     public virtual void Destroy(bool needRemoveFromContainer = true) {
 #if UNITY_EDITOR
-        if (go.g != null)           // unity 点击停止按钮后，这些变量似乎有可能提前变成 null
+        if (go.g != null)
 #endif
         {
-            // 将 u3d 底层对象返回池
             GO.Push(ref go);
+        }
+#if UNITY_EDITOR
+        if (mgo.g != null)
+#endif
+        {
+            GO.Push(ref mgo);
         }
 
         // 从空间索引容器移除

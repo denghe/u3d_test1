@@ -15,8 +15,6 @@ public class Effect_Number {
 
     // todo: color ?
     public Effect_Number(Stage stage_, float x_, float y_, float scale_, int v) {
-        Debug.Log(v);
-
         stage = stage_;
         scene = stage_.scene;
         x = x_;
@@ -36,7 +34,7 @@ public class Effect_Number {
 
     public void GOInit(int idx, int b) {
         var o = new GO();
-        GO.Pop(ref o, "FG2");
+        GO.Pop(ref o, 0, "FG2");
         o.r.sprite = scene.sprites_numbers[b];
         o.t.localScale = new Vector3(scale, scale, scale);
         gos[idx] = o;
