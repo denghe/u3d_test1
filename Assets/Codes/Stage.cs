@@ -61,11 +61,6 @@ public class Stage {
         }
 
         player.Draw();
-
-        // 如果启用了小地图，间歇关闭 camera 降低下绘制频率，提升点性能           // todo: 更精细控制 camera 启用频率. 最好是每间隔几帧 启用 1 帧
-        if (scene.minimapEnabled) {
-            scene.minimap_camera.enabled = (scene.time & 3) == 0;
-        }
     }
 
 

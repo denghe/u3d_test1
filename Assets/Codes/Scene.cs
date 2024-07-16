@@ -72,6 +72,9 @@ public partial class Scene : MonoBehaviour {
     // 当前是否已开启 minimap
     internal bool minimapEnabled = true;
 
+    //// 当前帧是否已执行过 update 函数( 每帧重置 )
+    //internal bool updated = false;
+
     // 当前总的运行帧编号
     internal int time = 0;
 
@@ -114,12 +117,21 @@ public partial class Scene : MonoBehaviour {
         // 处理输入( 只是填充 playerMoving 等状态值 )
         HandlePlayerInput();
 
+        var timeBak = time;
+
         // 按设计帧率驱动游戏逻辑
         timePool += Time.deltaTime;
         if (timePool > frameDelay) {
             timePool -= frameDelay;
             ++time;
             stage.Update();
+        }
+
+        //updated = timeBak != time;
+
+        // 如果启用了小地图，那么只在 update 执行过的帧，才启用 minimap 的 camera，提升点性能
+        if (minimapEnabled) {
+            minimap_camera.enabled = (timeBak != time) && ((time & 1) == 0);
         }
 
         // 同步显示
