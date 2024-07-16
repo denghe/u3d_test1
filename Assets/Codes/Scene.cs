@@ -69,6 +69,9 @@ public partial class Scene : MonoBehaviour {
     internal const float sqrt2 = 1.414213562373095f;
     internal const float sqrt2_1 = 0.7071067811865475f;
 
+    // 当前是否已开启 minimap
+    internal bool minimapEnabled = true;
+
     // 当前总的运行帧编号
     internal int time = 0;
 
@@ -138,7 +141,10 @@ public partial class Scene : MonoBehaviour {
         stage = newStage;
     }
 
+    // 启用 禁用 小地图( 可间歇 开关 minimap_camera 来提升性能 )
     internal void EnableMinimap(bool b = true) {
+        if (minimapEnabled == b) return;
+        minimapEnabled = b;
         minimap_canvas.enabled = b;
         minimap_camera.enabled = b;
     }
