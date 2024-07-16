@@ -7,7 +7,7 @@ public class Stage2 : Stage {
         // 这里可判断是不是 切关, 然后对 player 或啥的做相应处理
 
         // 开启小地图
-        scene.minimap_canvas.enabled = true;
+        scene.EnableMinimap(true);
 
         // 先给自己创建一些初始技能
         // todo: 通过配置来创建. 纯技能并没有什么意义，只有进了关卡之后，才能实例化，开始工作. 也就是说，技能依附于关卡存在。
@@ -48,7 +48,7 @@ public class Stage2 : Stage {
         Update_Effect_Explosions();
         Update_Effect_Numbers();
         Update_Monsters();
-        if (Update_MonstersGenerators() == 0) {      // 怪生成器 已经没了
+        if (Update_MonstersGenerators() == 0) {     // 怪生成器 已经没了
             timeout = scene.time + Scene.fps * 5;   // 设置 5 秒超时
             state = 2;
         }

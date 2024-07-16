@@ -15,6 +15,9 @@ public partial class Scene : MonoBehaviour {
     // 这个拖 Mini Map Canvas 节点
     public Canvas minimap_canvas;
 
+    // 这个拖 Mini Map Camera 节点
+    public Camera minimap_camera;
+
     // 编辑器中 分组, 多选 拖拽 精灵图集到此 ( texture packer 插件 生成的那个, 展开再 shift 多选 )
     public Sprite[] sprites_numbers;
     public Sprite[] sprites_explosions;
@@ -97,9 +100,6 @@ public partial class Scene : MonoBehaviour {
         // 初始化 底层绘制对象池
         GO.Init(material, 20000);
 
-        // 初始化小地图
-
-
         // 初始化 玩家
         player = new Player(this);
 
@@ -136,6 +136,11 @@ public partial class Scene : MonoBehaviour {
     internal void SetStage(Stage newStage) {
         stage.Destroy();
         stage = newStage;
+    }
+
+    internal void EnableMinimap(bool b = true) {
+        minimap_canvas.enabled = b;
+        minimap_camera.enabled = b;
     }
 
 }

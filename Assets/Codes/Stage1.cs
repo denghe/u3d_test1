@@ -9,7 +9,7 @@ public class Stage1 : Stage {
         // 这里可判断是不是 切关, 然后对 player 或啥的做相应处理
 
         // 关闭小地图
-        scene.minimap_canvas.enabled = false;
+        scene.EnableMinimap(false);
     }
 
     public override void Update() {

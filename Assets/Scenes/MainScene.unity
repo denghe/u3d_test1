@@ -477,6 +477,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 4add73b73584b93479af06b9b5a56147, type: 2}
   minimap_material: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   minimap_canvas: {fileID: 1717089961}
+  minimap_camera: {fileID: 1554500727}
   sprites_numbers:
   - {fileID: 1514658266, guid: 87195734d2b541646b909876ad83d322, type: 3}
   - {fileID: 928620863, guid: 87195734d2b541646b909876ad83d322, type: 3}
