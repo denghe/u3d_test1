@@ -3,39 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player {
-    public Scene scene;                                 // 指向场景
-    public Stage stage;                                 // 指向关卡
-    public GO go, mgo;                                  // 保存底层 u3d 资源. mgo: mini map 用到的那份
+    public Scene scene;                                                 // 指向场景
+    public Stage stage;                                                 // 指向关卡
+    public GO go, mgo;                                                  // 保存底层 u3d 资源. mgo: mini map 用到的那份
 
-    public const float defaultMoveSpeed = 20;           // 原始移动速度
+    public const float defaultMoveSpeed = (int)(450f / Scene.fps);      // 原始移动速度
     public const float _1_defaultMoveSpeed = 1f / defaultMoveSpeed;
-    public const float frameAnimIncrease = 1f / 5;      // 帧动画前进速度( 针对 defaultMoveSpeed )
-    public const float displayScale = 2f;               // 显示放大修正
-    public const float defaultRadius = 13f;             // 原始半径
+    public const float frameAnimIncrease = _1_defaultMoveSpeed;         // 帧动画前进速度( 针对 defaultMoveSpeed )
+    public const float displayScale = 2f;                               // 显示放大修正
+    public const float defaultRadius = 13f;                             // 原始半径
 
-    public float frameIndex = 0;                        // 当前动画帧下标
-    public bool flipX;                                  // 根据移动方向判断要不要反转 x 显示
+    public float frameIndex = 0;                                        // 当前动画帧下标
+    public bool flipX;                                                  // 根据移动方向判断要不要反转 x 显示
 
-    public float radius = defaultRadius;                // 半径. 该数值和玩家体积同步
-    public float x, y;                                  // 坐标( 格子坐标系, 大Y向下 )
-    public List<Vector2> positionHistory = new();       // 历史坐标数组    // todo: 需要自己实现一个 ring buffer 避免 move
-    public float radians {                              // 俯视角度下的角色 前进方向 弧度 ( 可理解为 朝向 )
+    public float radius = defaultRadius;                                // 半径. 该数值和玩家体积同步
+    public float x, y;                                                  // 坐标( 格子坐标系, 大Y向下 )
+    public List<Vector2> positionHistory = new();                       // 历史坐标数组    // todo: 需要自己实现一个 ring buffer 避免 move
+    public float radians {                                              // 俯视角度下的角色 前进方向 弧度 ( 可理解为 朝向 )
         get {
             return Mathf.Atan2(scene.playerDirection.y, scene.playerDirection.x);
         }
     }
-    public int quitInvincibleTime;                      // 退出无敌状态的时间点
+    public int quitInvincibleTime;                                      // 退出无敌状态的时间点
 
-    public int hp = 100;                                // 当前血量
-    public int maxHp = 100;                             // 血上限
-    public int damage = 10;                             // 当前基础伤害倍率( 技能上面为实际伤害值 )
-    public int defense = 10;                            // 防御力
-    public float criticalRate = 0.05f;                  // 暴击率
-    public float criticalDamageRatio = 1.5f;            // 暴击伤害倍率
-    public float dodgeRate = 0.05f;                     // 闪避率
-    public float moveSpeed = 20;                        // 当前每帧移动距离
-    public int getHurtInvincibleTimeSpan = 6;           // 受伤短暂无敌时长( 帧 )
-    public List<PlayerSkill> skills = new();            // 玩家技能数组
+    public int hp = 100;                                                // 当前血量
+    public int maxHp = 100;                                             // 血上限
+    public int damage = 10;                                             // 当前基础伤害倍率( 技能上面为实际伤害值 )
+    public int defense = 10;                                            // 防御力
+    public float criticalRate = 0.05f;                                  // 暴击率
+    public float criticalDamageRatio = 1.5f;                            // 暴击伤害倍率
+    public float dodgeRate = 0.05f;                                     // 闪避率
+    public float moveSpeed = 20;                                        // 当前每帧移动距离
+    public int getHurtInvincibleTimeSpan = 6;                           // 受伤短暂无敌时长( 帧 )
+    public List<PlayerSkill> skills = new();                            // 玩家技能数组
 
     public Player(Scene scene_) {
         scene = scene_;

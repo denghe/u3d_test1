@@ -64,6 +64,7 @@ public class Monster : SpaceItem {
         y = y_;
         radius = defaultRadius;
         spaceContainer.Add(this);   // 放入空间索引容器
+        ResetTargetOffsetXY();
     }
 
     // 返回 true 表示 怪需要自杀( 自爆 消散 啥的? ). 派生类需要处理击退: if (knockbackEndTime >= scene.time) return base.Update();
@@ -92,9 +93,7 @@ public class Monster : SpaceItem {
             dy = ph.y - y + tarOffsetY;
             dd = dx * dx + dy * dy;
             if (dd < radius * radius) {
-                var p = stage.GetRndPosDoughnut(200f, 10f); // 已靠近偏移点：重置偏移
-                tarOffsetX = p.x;
-                tarOffsetY = p.y;
+                ResetTargetOffsetXY();
             }
             // 计算移动方向并增量
             radians = Mathf.Atan2(dy, dx);
@@ -191,6 +190,13 @@ public class Monster : SpaceItem {
             ms[indexOfContainer] = last;
             ms.RemoveAt(lastIndex);
         }
+    }
+
+    // 重置偏移
+    void ResetTargetOffsetXY() {
+        var p = stage.GetRndPosDoughnut(player.radius * 10 * 3, 0.1f);
+        tarOffsetX = p.x;
+        tarOffsetY = p.y;
     }
 
     // 令怪受伤, 播特效. 返回怪是否 已死亡. 已死亡将从数组移除该怪( !!! 重要 : 需位于 倒循环 for 内 )

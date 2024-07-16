@@ -8,13 +8,11 @@ public class PlayerBullet {
     public Player player;
     public PlayerSkill skill;
     public SpaceContainer monstersSpaceContainer;
-
     public GO go;                                   // 保存底层 u3d 资源
 
     public const float displayBaseScale = 1f;       // 显示放大修正
-    public const float defaultRadius = 5f;          // 原始半径
+    public const float defaultRadius = 7f;          // 原始半径
     public const float _1_defaultRadius = 1f / defaultRadius;
-    public const float shootDistance = 15;          // 发射时与身体的距离
 
     public float x, y, radians;                     // 坐标, 弧度
     public float incX, incY;                        // 每帧的移动增量
@@ -49,7 +47,7 @@ public class PlayerBullet {
         // ...
     }
 
-    public PlayerBullet Init(float x_, float y_, float radians_) {
+    public PlayerBullet Init(float x_, float y_, float radians_, float cos_, float sin_) {
         // 从对象池分配 u3d 底层对象
         GO.Pop(ref go);
         go.r.sprite = scene.sprites_bullets[1];
@@ -57,12 +55,10 @@ public class PlayerBullet {
 
         lifeEndTime = life + scene.time;
         radians = radians_;
-        var cos = Mathf.Cos(radians_);
-        var sin = Mathf.Sin(radians_);
-        x = x_ + cos * shootDistance;
-        y = y_ + sin * shootDistance;
-        incX = cos * moveSpeed;
-        incY = sin * moveSpeed;
+        x = x_;
+        y = y_;
+        incX = cos_ * moveSpeed;
+        incY = sin_ * moveSpeed;
 
         return this;
     }
@@ -162,5 +158,6 @@ public class PlayerBullet {
             // 将 u3d 底层对象返回池
             GO.Push(ref go);
         }
+        //hitBlackList = null;
     }
 }

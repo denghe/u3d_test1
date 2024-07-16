@@ -26,6 +26,9 @@ public class Stage2 : Stage {
             case 2:
                 P2();
                 return;
+            case 3:
+                P3();
+                return;
             default:
                 throw new System.Exception("can't be here");
         }
@@ -48,8 +51,8 @@ public class Stage2 : Stage {
         Update_Effect_Explosions();
         Update_Effect_Numbers();
         Update_Monsters();
-        if (Update_MonstersGenerators() == 0) {     // 怪生成器 已经没了
-            timeout = scene.time + Scene.fps * 5;   // 设置 5 秒超时
+        if (Update_MonstersGenerators() == 0) {         // 怪生成器 已经没了
+            timeout = scene.time + Scene.fps * 60;      // 设置 60 秒超时
             state = 2;
         }
         Update_PlayerBullets();
@@ -59,12 +62,17 @@ public class Stage2 : Stage {
     public void P2() {
         Update_Effect_Explosions();
         Update_Effect_Numbers();
-        Update_Monsters();
+        if (Update_Monsters() == 0) {   // 怪杀完
+            state = 3;
+        }
         Update_PlayerBullets();
         player.Update();
-        if (timeout < scene.time) {
-            scene.SetStage(new Stage1(scene));      // 已超时：切到新关卡
+        if (timeout < scene.time) {     // 已超时
+            state = 3;
         }
     }
 
+    public void P3() {
+        scene.SetStage(new Stage1(scene));          // 已超时：切到新关卡
+    }
 }
