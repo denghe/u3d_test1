@@ -194,7 +194,7 @@ public class Monster : SpaceItem {
 
     // 重置偏移
     void ResetTargetOffsetXY() {
-        var p = stage.GetRndPosDoughnut(player.radius * 10 * 3, 0.1f);
+        var p = stage.GetRndPosDoughnut(player.radius * 10, 0.1f);
         tarOffsetX = p.x;
         tarOffsetY = p.y;
     }
