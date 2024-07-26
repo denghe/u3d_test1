@@ -577,6 +577,7 @@ public class SpaceRingDiffuseData {
         lens.Add(new SpaceCountRadius { count = 0, radius = 0f });
         idxs.Add(new SpaceXYi());
         HashSet<ulong> set = new();
+        set.Add(0);
         for (float radius = 0; radius < cellSize * gridNumRows; radius += cellSize) {
             var lenBak = idxs.Count;
             var radians = Mathf.Asin(0.5f / radius) * 2;
