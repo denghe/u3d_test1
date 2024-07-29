@@ -2,6 +2,7 @@
 
 public class Stage1 : Stage {
     public int timeout;
+    public System.Random random = new();
 
     public Stage1(Scene scene) : base(scene) {
         // 这里可判断是不是 切关, 然后对 player 或啥的做相应处理
@@ -48,7 +49,8 @@ public class Stage1 : Stage {
         for (int i = 0; i < 50; i++) {
             var x = Random.Range(-Scene.designWidth_2, Scene.designWidth_2);
             var y = Random.Range(-Scene.designHeight_2, Scene.designHeight_2);
-            var v = Random.Range(0, 99999999999999999999999f);
+            //var v = Random.Range(0, 1000000000) * System.Math.Pow(10, Random.Range(1, 20 - 10));   // 307 - 10
+            var v = random.NextDouble() * System.Math.Pow(10, Random.Range(2, 30 - 10));
             new Effect_Number(this, player.x + x, player.y + y, 2, v, Random.value > 0.5f);
         }
     }

@@ -423,7 +423,7 @@ public class SpaceContainer {
         var searchRange = maxDistance + cellSize;
 
         SpaceItem rtv = null;
-        float minDistance = 0;
+        float maxV = 0;
 
         var lens = d.lens;
         var idxs = d.idxs;
@@ -446,9 +446,10 @@ public class SpaceContainer {
                     var r = maxDistance + c.radius;
                     var v = r * r - dd;
 
-                    if (v > minDistance) {
+
+                    if (v > maxV) {
                         rtv = c;
-                        minDistance = v;
+                        maxV = v;
                     }
                     c = c.spaceNext;
                 }

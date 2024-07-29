@@ -3,7 +3,6 @@
 public class Effect_Number {
     public Scene scene;
     public Stage stage;
-    public Sprite[] font;
 
     public GO[] gos = new GO[12];
     public int size;
@@ -17,7 +16,6 @@ public class Effect_Number {
     public Effect_Number(Stage stage_, float x_, float y_, float scale_, double v, bool criticalHit) {
         stage = stage_;
         scene = stage_.scene;
-        font = criticalHit ? scene.sprites_font_red_outline : scene.sprites_font_white_outline;
 
         x = x_;
         y = y_;
@@ -30,8 +28,11 @@ public class Effect_Number {
         for (int i = 0; i < size; i++) {
             var o = new GO();
             GO.Pop(ref o, 0, "FG2");
-            o.r.sprite = font[sb[i] - 33];
+            o.r.sprite = scene.sprites_font_outline[sb[i] - 32];
             o.t.localScale = new Vector3(scale, scale, scale);
+            if (criticalHit) {
+                o.r.color = Color.red;
+            }
             gos[i] = o;
         }
         
@@ -54,7 +55,7 @@ public class Effect_Number {
             for (int i = 0; i < size; ++i) {
                 gos[i].Enable();
                 gos[i].t.position = new Vector3(
-                    (x + i * 10 * scale) * Scene.designWidthToCameraRatio        // todo: width calculate?
+                    (x + i * 8 * scale) * Scene.designWidthToCameraRatio
                     , -y * Scene.designWidthToCameraRatio
                     , 0);
             }

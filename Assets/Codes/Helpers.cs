@@ -27,13 +27,17 @@ public static partial class Helpers {
         // ... 继续造？
     };
 
+    // condition: d >= 0
     public static void ToStringCN(double d, ref StringBuilder o) {
         o.Clear();
-        var v = Math.Abs(d);
-        var e = (int)Math.Log10(v);
+        if (d < 1) {
+            o.Append('0');
+            return;
+        }
+        var e = (int)Math.Log10(d);
         if (e < 4) {
             o.Length = e + 1;
-            var n = (int)v;
+            var n = (int)d;
             while (n >= 10) {
                 var a = n / 10;
                 var b = n - a * 10;
@@ -43,10 +47,10 @@ public static partial class Helpers {
             o[0] = (char)(n + 48);
         } else {
             var idx = e / 4;
-            v /= Math.Pow(10, idx * 4);
+            d /= Math.Pow(10, idx * 4);
             e = e - idx * 4;
             o.Length = e + 1;
-            var n = (int)v;
+            var n = (int)d;
             var bak = n;
             while (n >= 10) {
                 var a = n / 10;
@@ -55,8 +59,8 @@ public static partial class Helpers {
                 n = a;
             }
             o[0] = (char)(n + 48);
-            if (v > bak) {
-                var first = (int)((v - bak) * 10);
+            if (d > bak) {
+                var first = (int)((d - bak) * 10);
                 if (first > 0) {
                     o.Append('.');
                     o.Append((char)(first + 48));
@@ -65,19 +69,23 @@ public static partial class Helpers {
             if (idx < NumNames.Length) {
                 o.Append(NumNames[idx]);
             } else {
-                o.Append("e+");
+                o.Append("e");
                 o.Append(idx * 4);
             }
         }
     }
 
+    // condition: d >= 0
     public static void ToStringEN(double d, ref StringBuilder o) {
         o.Clear();
-        var v = Math.Abs(d);
-        var e = (int)Math.Log10(v);
+        if (d < 1) {
+            o.Append('0');
+            return;
+        }
+        var e = (int)Math.Log10(d);
         if (e < 3) {
             o.Length = e + 1;
-            var n = (int)v;
+            var n = (int)d;
             while (n >= 10) {
                 var a = n / 10;
                 var b = n - a * 10;
@@ -87,10 +95,10 @@ public static partial class Helpers {
             o[0] = (char)(n + 48);
         } else {
             var idx = e / 3;
-            v /= Math.Pow(10, idx * 3);
+            d /= Math.Pow(10, idx * 3);
             e = e - idx * 3;
             o.Length = e + 1;
-            var n = (int)v;
+            var n = (int)d;
             var bak = n;
             while (n >= 10) {
                 var a = n / 10;
@@ -99,17 +107,17 @@ public static partial class Helpers {
                 n = a;
             }
             o[0] = (char)(n + 48);
-            if (v > bak) {
-                var first = (int)((v - bak) * 10);
+            if (d > bak) {
+                var first = (int)((d - bak) * 10);
                 if (first > 0) {
                     o.Append('.');
                     o.Append((char)(first + 48));
                 }
             }
             if (idx < 10) {
-                o.Append(" kmgtpezyb"[idx]);
+                o.Append(" KMGTPEZYB"[idx]);
             } else {
-                o.Append("E+");
+                o.Append("e");
                 o.Append(idx * 3);
             }
         }
