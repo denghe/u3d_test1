@@ -43,7 +43,7 @@ public class Player {
         GO.Pop(ref go);
         go.Enable();
 
-        GO.Pop(ref mgo, 3, "MiniMap");
+        GO.Pop(ref mgo, 3);
         mgo.Enable();
         mgo.r.sprite = scene.sprites_player[0];
         mgo.r.material = scene.minimap_material;

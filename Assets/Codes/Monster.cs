@@ -50,7 +50,7 @@ public class Monster : SpaceItem {
 
         GO.Pop(ref go);
 
-        GO.Pop(ref mgo, 3, "MiniMap");
+        GO.Pop(ref mgo, 3);
         mgo.r.material = scene.minimap_material;
         mgo.t.localScale = new Vector3(4, 4, 4);
         //mgo.r.color = Color.red;

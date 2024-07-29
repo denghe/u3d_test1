@@ -108,20 +108,24 @@ public class Stage {
     /*************************************************************************************************************************/
 
 
+
     // 执行怪生成配置并返回是否已经全部执行完毕
     public int Update_MonstersGenerators() {
         var time = scene.time;
-        for (int i = monsterGenerators.Count - 1; i >= 0; i--) {
-            var mg = monsterGenerators[i];
+        var os = monsterGenerators;
+        for (int i = os.Count - 1; i >= 0; i--) {
+            var mg = os[i];
             if (mg.activeTime <= time) {
                 if (mg.destroyTime >= time) {
                     mg.Update();
                 } else {
-                    monsterGenerators.RemoveAtSwapBack(i);
+                    int lastIndex = os.Count - 1;
+                    os[i] = os[lastIndex];
+                    os.RemoveAt(lastIndex);
                 }
             }
         }
-        return monsterGenerators.Count;
+        return os.Count;
     }
 
     // 驱动所有怪
@@ -142,8 +146,10 @@ public class Stage {
         for (int i = os.Count - 1; i >= 0; i--) {
             var o = os[i];
             if (o.Update()) {
-                os.RemoveAtSwapBack(i); // 从数组移除
-                o.Destroy();    // 资源回收. 并不会自动从数组移除
+                int lastIndex = os.Count - 1;
+                os[i] = os[lastIndex];
+                os.RemoveAt(lastIndex);
+                o.Destroy();
             }
         }
         return os.Count;
@@ -155,8 +161,10 @@ public class Stage {
         for (int i = os.Count - 1; i >= 0; i--) {
             var o = os[i];
             if (o.Update()) {
-                os.RemoveAtSwapBack(i); // 从数组移除
-                o.Destroy();    // 资源回收. 并不会自动从数组移除
+                int lastIndex = os.Count - 1;
+                os[i] = os[lastIndex];
+                os.RemoveAt(lastIndex);
+                o.Destroy();
             }
         }
         return os.Count;
@@ -168,8 +176,10 @@ public class Stage {
         for (int i = os.Count - 1; i >= 0; i--) {
             var o = os[i];
             if (o.Update()) {
-                os.RemoveAtSwapBack(i); // 从数组移除
-                o.Destroy();    // 资源回收. 并不会自动从数组移除
+                int lastIndex = os.Count - 1;
+                os[i] = os[lastIndex];
+                os.RemoveAt(lastIndex);
+                o.Destroy();
             }
         }
         return os.Count;

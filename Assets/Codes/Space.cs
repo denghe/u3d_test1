@@ -201,7 +201,7 @@ public class SpaceContainer {
 
 
     // 在 9 宫内找出 第1个 相交物 并返回
-    public SpaceItem Foreach9FirstHitCheck(float x, float y, float radius) {
+    public SpaceItem FindFirstCrossBy9(float x, float y, float radius) {
         // 5
         int cIdx = (int)(x * _1_cellSize);
         if (cIdx < 0 || cIdx >= numCols) return null;
@@ -423,7 +423,7 @@ public class SpaceContainer {
         var searchRange = maxDistance + cellSize;
 
         SpaceItem rtv = null;
-        float minDistance = maxDistance * maxDistance + float.Epsilon;
+        float minDistance = 0;
 
         var lens = d.lens;
         var idxs = d.idxs;
@@ -446,7 +446,7 @@ public class SpaceContainer {
                     var r = maxDistance + c.radius;
                     var v = r * r - dd;
 
-                    if (v > 0) {
+                    if (v > minDistance) {
                         rtv = c;
                         minDistance = v;
                     }
