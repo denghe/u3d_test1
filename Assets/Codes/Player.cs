@@ -30,7 +30,7 @@ public class Player {
     public int maxHp = 100;                                             // 血上限
     public int damage = 10;                                             // 当前基础伤害倍率( 技能上面为实际伤害值 )
     public int defense = 10;                                            // 防御力
-    public float criticalRate = 0.05f;                                  // 暴击率
+    public float criticalRate = 0.2f;                                   // 暴击率
     public float criticalDamageRatio = 1.5f;                            // 暴击伤害倍率
     public float dodgeRate = 0.05f;                                     // 闪避率
     public float moveSpeed = 20;                                        // 当前每帧移动距离

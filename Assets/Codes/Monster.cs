@@ -204,20 +204,21 @@ public class Monster : SpaceItem {
 
         // 结合暴击算最终伤害值
         var d = playerBulletDamage * player.damage;
-        if (Random.value <= player.criticalRate) {
+        var b = Random.value <= player.criticalRate;
+        if (b) {
             d = (int)(d * player.criticalDamageRatio);
         }
 
         if (hp <= d) {
             // 怪被打死: 删, 播特效
             new Effect_Explosion(stage, x, y, radius * _1_defaultRadius);
-            new Effect_Number(stage, x, y, 2, hp);
+            new Effect_Number(stage, x, y, 2, hp, b);
             Destroy();
             return true;
         } else {
             // 怪没死: 播飙血特效( todo )
             hp -= d;
-            new Effect_Number(stage, x, y, 2, d);
+            new Effect_Number(stage, x, y, 2, d, b);
 
             // 击退?
             if (knockbackForce > 0) {

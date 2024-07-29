@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using UnityEngine.Experimental.AI;
 
 public static partial class Helpers {
 
@@ -26,7 +27,7 @@ public static partial class Helpers {
         // ... 继续造？
     };
 
-    public static void ToDrawStringCN(double d, ref StringBuilder o) {
+    public static void ToStringCN(double d, ref StringBuilder o) {
         o.Clear();
         var v = Math.Abs(d);
         var e = (int)Math.Log10(v);
@@ -70,7 +71,7 @@ public static partial class Helpers {
         }
     }
 
-    public static void ToDrawStringEN(double d, ref StringBuilder o) {
+    public static void ToStringEN(double d, ref StringBuilder o) {
         o.Clear();
         var v = Math.Abs(d);
         var e = (int)Math.Log10(v);
@@ -106,12 +107,26 @@ public static partial class Helpers {
                 }
             }
             if (idx < 10) {
-                o.Append(" KMGTPEZYB"[idx]);
+                o.Append(" kmgtpezyb"[idx]);
             } else {
-                o.Append("e+");
+                o.Append("E+");
                 o.Append(idx * 3);
             }
         }
+    }
+
+
+    // not thread safe
+    public static StringBuilder ToStringResult = new();
+
+    public static StringBuilder ToStringEN(double d) {
+        ToStringEN(d, ref ToStringResult);
+        return ToStringResult;
+    }
+
+    public static StringBuilder ToStringCN(double d) {
+        ToStringCN(d, ref ToStringResult);
+        return ToStringResult;
     }
 
 }

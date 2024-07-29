@@ -19,7 +19,10 @@ public partial class Scene : MonoBehaviour {
     public Camera minimap_camera;
 
     // 编辑器中 分组, 多选 拖拽 精灵图集到此 ( texture packer 插件 生成的那个, 展开再 shift 多选 )
-    public Sprite[] sprites_numbers;
+    public Sprite[] sprites_font_white_normal;
+    public Sprite[] sprites_font_white_outline;
+    public Sprite[] sprites_font_red_outline;
+    public Sprite[] sprites_font_blue_outline;
     public Sprite[] sprites_explosions;
     public Sprite[] sprites_player;
     public Sprite[] sprites_bullets;
@@ -110,7 +113,8 @@ public partial class Scene : MonoBehaviour {
         player = new Player(this);
 
         // 初始化起始关卡
-        stage = new Stage2(this);
+        stage = new Stage1(this);
+        //stage = new Stage2(this);
     }
 
     void Update() {

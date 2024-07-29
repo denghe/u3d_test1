@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Stage1 : Stage {
     public int timeout;
@@ -50,8 +48,8 @@ public class Stage1 : Stage {
         for (int i = 0; i < 50; i++) {
             var x = Random.Range(-Scene.designWidth_2, Scene.designWidth_2);
             var y = Random.Range(-Scene.designHeight_2, Scene.designHeight_2);
-            var v = Random.Range(0, 9999);
-            new Effect_Number(this, player.x + x, player.y + y, 2, v);
+            var v = Random.Range(0, 99999999999999999999999f);
+            new Effect_Number(this, player.x + x, player.y + y, 2, v, Random.value > 0.5f);
         }
     }
 
