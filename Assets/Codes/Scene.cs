@@ -104,7 +104,7 @@ public partial class Scene : MonoBehaviour {
         }
 
         // 初始化 底层绘制对象池
-        GO.Init(material, 20000);
+        GO.Init(material, minimap_material, 20000);
 
         // 初始化 玩家
         player = new Player(this);

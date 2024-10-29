@@ -43,10 +43,9 @@ public class Player {
         GO.Pop(ref go);
         go.Enable();
 
-        GO.Pop(ref mgo, 3);
+        GO.PopMini(ref mgo, 3);
         mgo.Enable();
         mgo.r.sprite = scene.sprites_player[0];
-        mgo.r.material = scene.minimap_material;
         mgo.t.localScale = new Vector3(4, 4, 4);
     }
 
@@ -149,7 +148,7 @@ public class Player {
         if (mgo.g != null)
 #endif
         {
-            GO.Push(ref mgo);
+            GO.PushMini(ref mgo);
         }
     }
 

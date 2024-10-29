@@ -50,8 +50,7 @@ public class Monster : SpaceItem {
 
         GO.Pop(ref go);
 
-        GO.Pop(ref mgo, 3);
-        mgo.r.material = scene.minimap_material;
+        GO.PopMini(ref mgo, 3);
         mgo.t.localScale = new Vector3(4, 4, 4);
         //mgo.r.color = Color.red;
     }
@@ -175,7 +174,7 @@ public class Monster : SpaceItem {
         if (mgo.g != null)
 #endif
         {
-            GO.Push(ref mgo);
+            GO.PushMini(ref mgo);
         }
 
         // 从空间索引容器移除

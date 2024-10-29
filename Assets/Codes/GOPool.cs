@@ -45,10 +45,10 @@ public struct GO {
 
 
     // 对象池
-    public static Stack<GO> pool;
+    public static Stack<GO> pool, pool_mini;
 
     // 统一材质
-    public static Material material;
+    public static Material material, material_mini;
 
 
     /******************************************************************************************/
@@ -61,7 +61,7 @@ public struct GO {
         Debug.Assert(o.g == null);
 #endif
         if (!pool.TryPop(out o)) {
-            o = New();
+            o = New(material);
         }
         o.g.layer = layer;
         o.r.sortingLayerName = sortingLayerName;
@@ -74,7 +74,10 @@ public struct GO {
 #endif
         o.Disable();
         o.SetColorNormal();
-        o.r.material = material;
+#if UNITY_EDITOR
+        Debug.Assert(o.r.sharedMaterial == GO.material);
+#endif
+        //o.r.material = material;
         o.g.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         o.g.transform.localScale = Vector3.one;
         pool.Push(o);
@@ -85,31 +88,70 @@ public struct GO {
     }
 
     // 新建 GO 并返回( 顺便设置统一的材质球 排序 pivot )
-    public static GO New() {
+    public static GO New(Material m) {
         GO o = new();
         o.g = new GameObject();
         o.r = o.g.AddComponent<SpriteRenderer>();
-        o.r.material = material;
+        o.r.sharedMaterial = m;
         o.r.spriteSortPoint = SpriteSortPoint.Pivot;
         o.t = o.g.GetComponent<Transform>();
         o.g.SetActive(false);
         return o;
     }
 
+    
+    /******************************************************************************************/
+    /******************************************************************************************/
+
+    // 从对象池拿 GO 并返回. 没有就新建( for mini map )
+    public static void PopMini(ref GO o, int layer = 0, string sortingLayerName = "Default") {
+#if UNITY_EDITOR
+        Debug.Assert(o.g == null);
+#endif
+        if (!pool_mini.TryPop(out o)) {
+            o = New(material_mini);
+        }
+        o.g.layer = layer;
+        o.r.sortingLayerName = sortingLayerName;
+    }
+
+    // 将 GO 退回对象池( for mini map )
+    public static void PushMini(ref GO o) {
+#if UNITY_EDITOR
+        Debug.Assert(o.g != null);
+#endif
+        o.Disable();
+        o.SetColorNormal();
+#if UNITY_EDITOR
+        Debug.Assert(o.r.sharedMaterial == GO.material_mini);
+#endif
+        o.g.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+        o.g.transform.localScale = Vector3.one;
+        pool_mini.Push(o);
+        o.g = null;
+        o.r = null;
+        o.t = null;
+        o.actived = false;
+    }
 
     /******************************************************************************************/
     /******************************************************************************************/
 
 
     // 预填充
-    public static void Init(Material material, int count) {
+    public static void Init(Material material, Material material_mini, int count) {
 #if UNITY_EDITOR
         Debug.Assert(GO.material == null);
 #endif
         GO.material = material;
         GO.pool = new(count);
+
+        GO.material_mini = material_mini;
+        GO.pool_mini = new(count);
+
         for (int i = 0; i < count; i++) {
-            pool.Push(New());
+            pool.Push(New(material));
+            pool_mini.Push(New(material_mini));
         }
     }
 
@@ -118,6 +160,10 @@ public struct GO {
         foreach (var o in pool) {
             GameObject.Destroy(o.g);
         }
+        foreach (var o in pool_mini) {
+            GameObject.Destroy(o.g);
+        }
         pool.Clear();
+        pool_mini.Clear();
     }
 }
